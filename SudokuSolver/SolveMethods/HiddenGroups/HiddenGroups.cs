@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SudokuSolver;
-
-
+﻿namespace SudokuSolver.SolveMethods.HiddenGroups;
 
 public abstract class HiddenGroups
 {
@@ -71,9 +62,16 @@ public abstract class HiddenGroups
                         {
                             BitArray bitArray = new BitArray(cells[positionOfOnes[position]].Options);
 
-                            cells[positionOfOnes[position]].Options.And(bitArrayOfmasks);
+                            BitArray bits = new BitArray(9);
 
-                            for (int k = 0; k < bitArray.Length; k++)
+                            for (int r = 0; r < smasks.Length; r++)
+                            {
+                                bits[smasks[r].keyBit] = true;
+                            }
+
+                            cells[positionOfOnes[position]].Options.And(bits);
+
+                            for (int k = 0; k < 9; k++)
                             {
                                 if (bitArray[k] != cells[positionOfOnes[position]].Options[k]) result = true;
                             }

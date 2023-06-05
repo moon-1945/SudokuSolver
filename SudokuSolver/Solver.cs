@@ -1,4 +1,5 @@
 ﻿using SudokuSolver.SolveMethods;
+using SudokuSolver.SolveMethods.HiddenGroups;
 using SudokuSolver.SolveMethods.NakedGroups;
 
 namespace SudokuSolver;
@@ -11,9 +12,13 @@ public class Solver
         new ShowPossibles(),
         new HidenSingle(),
         new NakedPairs(),
-       // new HiddenPairs(),
         new NakedTriples(),
         new NakedQuads(),
+        new HiddenPairs(),
+        new HiddenTriples(),
+        new HiddenQuads(),
+        //new NakedTriples(),
+        //new NakedQuads(),
        
     };
 
@@ -31,8 +36,9 @@ public class Solver
             {
                 if (method.TrySolve(_sudoku))
                 {
-                    if(method is not ShowPossibles && method is not CheckForSolvedCells)
-                        Console.WriteLine(method.GetType());
+                    //if (method is NakedPairs) Console.WriteLine(method.GetType());
+                    //if (method is not ShowPossibles && method is not CheckForSolvedCells)
+                    //    Console.WriteLine(method.GetType());
                     //Console.WriteLine(_sudoku);
                     a = true;
                     break;

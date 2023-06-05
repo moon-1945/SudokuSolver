@@ -17,4 +17,4 @@ sudokuSolver.Solve();
 Console.WriteLine(sudoku);
 */
 
-Solver.RunExample();
+Solver.RunCheck();
