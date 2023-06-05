@@ -27,7 +27,7 @@ public class ShowPossibles : ISolveMethod
             }
         }
         
-        sudoku.newFoundCells.Clear();
+        sudoku.newFoundCells?.Clear();
         return result;
     }
 

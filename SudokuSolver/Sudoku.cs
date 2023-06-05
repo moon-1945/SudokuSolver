@@ -11,9 +11,6 @@ public class Sudoku
 
     public List<Cell> newFoundCells;
 
-
-
-
     public Sudoku(int[,] cells)
     {
         newFoundCells = new List<Cell>();   
@@ -44,6 +41,45 @@ public class Sudoku
                 Rows[i][j] = cell;
                 Columns[j][i] = cell;
                 Squares[3 * (i / 3) + (j / 3)][3 * (i % 3) + j % 3] = cell;
+            }
+        }
+    }
+
+    public Sudoku(int[][][] grid)
+    {
+        Rows = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
+        Columns = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
+        Squares = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
+
+        for (int i = 0; i < 27; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                Cell c = Rows[i / 3][j];
+
+                if(c == null)
+                {
+                    c = new Cell(i/3, j, 0, new BitArray(9));
+                    Rows[i / 3][j] = c;
+                    Columns[j][i / 3] = c;
+                    Squares[i / 3 / 3 * 3 + j / 3][i / 3 % 3 * 3 + j % 3] = c;
+                }
+
+                if(c.Value != 0)
+                {
+                    continue;
+                }
+
+                if(grid[i][j].Length > 0 && grid[i][j][0] < 0)
+                {
+                    c.Value = -grid[i][j][0];
+                    continue;
+                }
+
+                for (int k = 0; k < grid[i][j].Length; k++)
+                {
+                    c.Options[grid[i][j][k] - 1] = true;
+                }
             }
         }
     }
