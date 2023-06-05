@@ -2,173 +2,8 @@
 
 public abstract class NakedGroups
 {
-    public bool TrySolve1(Sudoku sudoku, int groupSize)
-    {
-        //Console.WriteLine(sudoku);
-        bool result = false;
-
-        BitArray[][] rowsMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-        BitArray[][] columnMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-        BitArray[][] squareMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-
-        Cell[][][] cellModes = { sudoku.Rows, sudoku.Columns, sudoku.Squares };
-        BitArray[][][] maskModes = { rowsMasks, columnMasks, squareMasks };
-
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                for (int bit = 0; bit < 9; bit++)
-                {
-                    rowsMasks[i][bit][j] = sudoku.Rows[i][j].Options[bit];
-                    columnMasks[j][bit][i] = sudoku.Rows[i][j].Options[bit];
-                    squareMasks[3 * (i / 3) + j / 3][bit][3 * (i % 3) + j % 3] = sudoku.Rows[i][j].Options[bit];
-                }
-            }
-        }
-
-
-        for (int mode = 0; mode < cellModes.Length; mode++)
-        {
-            for (int i = 0; i < 9; i++)
-            {
-                var cells = cellModes[mode][i];
-
-                var masks = maskModes[mode][i];
-
-                var smasks = masks.Select((bitArrForKey, keyBit) => (bitArrForKey, keyBit))
-                    .Where(p => (p.bitArrForKey.GetArrayOfOnes().Length <= groupSize)
-                    && (p.bitArrForKey.GetArrayOfOnes().Length > 0))
-                    .ToArray();
-
-
-                int[] move = new int[groupSize].Select((elem, index) => index).ToArray();
-
-                if (smasks.Length < groupSize) continue;
-
-                do
-                {
-                    int[] positionOfOnes;
-
-                    BitArray bitArrayOfmasks = smasks[move[0]].bitArrForKey;
-
-                    for (int r = 1; r < groupSize; r++)
-                    {
-                        bitArrayOfmasks.Or(smasks[move[r]].bitArrForKey);
-                    }
-
-                    if ((positionOfOnes = bitArrayOfmasks.GetArrayOfOnes()).Length == groupSize)
-                    {
-                        int[] bits = new int[groupSize].Select((elem, index) => smasks[move[index]].keyBit).ToArray();
-
-                        int pos;
-
-                        switch (mode)
-                        {
-                            case 0:
-                            case 1:
-
-                                bool allInOneSquare = true;
-
-                                for (int r = 0; r < positionOfOnes.Length - 1; r++)
-                                {
-                                    allInOneSquare &= (cells[positionOfOnes[r]].S == cells[positionOfOnes[r + 1]].S);
-                                }
-
-                                pos = cells[positionOfOnes[0]].S;
-
-                                if (allInOneSquare)
-                                {
-                                    foreach (var cell in sudoku.Squares[pos])
-                                    {
-                                        bool cellIsChoosen = false;
-                                        for (int r = 0; r < positionOfOnes.Length; r++)
-                                        {
-                                            cellIsChoosen |= cell == cells[positionOfOnes[r]];
-                                        }
-                                        if (cellIsChoosen) continue;
-
-                                        bool somethingWillNotChange = true;
-                                        foreach (int bit in bits) somethingWillNotChange &= !cell.Options[bit];
-                                        if (somethingWillNotChange) continue;
-
-                                        result = true;
-                                        foreach (int bit in bits)
-                                            cell.Options[bit] = false;
-                                    }
-                                }
-                                break;
-                            case 2:
-                                bool allInOneRow = true;
-
-                                for (int r = 0; r < positionOfOnes.Length - 1; r++)
-                                {
-                                    allInOneRow &= (cells[positionOfOnes[r]].I == cells[positionOfOnes[r + 1]].I);
-                                }
-
-                                bool allInOneColumn = true;
-
-                                for (int r = 0; r < positionOfOnes.Length - 1; r++)
-                                {
-                                    allInOneColumn &= (cells[positionOfOnes[r]].J == cells[positionOfOnes[r + 1]].J);
-                                }
-
-                                if (allInOneRow)
-                                {
-                                    pos = cells[positionOfOnes[0]].I;
-                                    foreach (var cell in sudoku.Rows[pos])
-                                    {
-                                        bool cellIsChoosen = false;
-                                        for (int r = 0; r < positionOfOnes.Length; r++)
-                                        {
-                                            cellIsChoosen |= cell == cells[positionOfOnes[r]];
-                                        }
-                                        if (cellIsChoosen) continue;
-
-                                        bool somethingWillNotChange = true;
-                                        foreach (int bit in bits) somethingWillNotChange &= !cell.Options[bit];
-                                        if (somethingWillNotChange) continue;
-
-                                        result = true;
-                                        foreach (int bit in bits)
-                                            cell.Options[bit] = false;
-                                    }
-                                }
-                                else if (allInOneColumn)
-                                {
-                                    pos = cells[positionOfOnes[0]].J;
-                                    foreach (var cell in sudoku.Columns[pos])
-                                    {
-                                        bool cellIsChoosen = false;
-                                        for (int r = 0; r < positionOfOnes.Length; r++)
-                                        {
-                                            cellIsChoosen |= cell == cells[positionOfOnes[r]];
-                                        }
-                                        if (cellIsChoosen) continue;
-
-                                        bool somethingWillNotChange = true;
-                                        foreach (int bit in bits) somethingWillNotChange &= !cell.Options[bit];
-                                        if (somethingWillNotChange) continue;
-
-                                        result = true;
-                                        foreach (int bit in bits)
-                                            cell.Options[bit] = false;
-                                    }
-                                }
-                                break;
-                        }
-                    }
-
-                } while (MoveOnChooses(move, smasks.Length));
-            }
-        }
-        return result;
-    }
-
-
     public bool TrySolve(Sudoku sudoku, int groupSize)
     {
-        //Console.WriteLine(sudoku);
         bool result = false;
 
         Cell[][][] cellModes = { sudoku.Rows, sudoku.Columns, sudoku.Squares };
@@ -191,11 +26,6 @@ public abstract class NakedGroups
 
                     int[] bits;
 
-                    /*var scells = cells.Select((bitArrForKey, keyBit) => (bitArrForKey, keyBit))
-                    .Where(p => (p.bitArrForKey.GetArrayOfOnes().Length <= groupSize)
-                    && (p.bitArrForKey.GetArrayOfOnes().Length > 0))
-                    .ToArray();*/
-
                     BitArray bitArrayOfCells = new BitArray(cells[moveOnCells[0]].Options);
                     
                     for (int r = 1; r < groupSize; r++)
@@ -204,32 +34,11 @@ public abstract class NakedGroups
 
                     }
 
-
-
                     if ((bits = bitArrayOfCells.GetArrayOfOnes()).Length == groupSize)
                     {
-                        /*bool q = false;
-                        int moveOnBits = 0;
-                        for (int chosen = 0; chosen < groupSize; chosen++)
-                        {
-                            for (int r = 0; r< 9;r++)
-                            {
-                                if (moveOnBits < groupSize)
-                                if (r == bits[moveOnBits])
-                                {
-                                    moveOnBits++;
-                                    continue;
-                                }
-                                if (cells[moveOnCells[chosen]].Options[r]) q = true; 
-                            }
-                        }
-
-                        if (q) continue;*/
-
-                       // Console.WriteLine(sudoku);
                         foreach (var cell in cells)
                         {
-
+                        
                             bool cellIsChoosen = false;
                             for (int r = 0; r < groupSize; r++)
                             {
@@ -240,27 +49,19 @@ public abstract class NakedGroups
                             bool somethingWillNotChange = true;
                             foreach (int bit in bits) somethingWillNotChange &= (!cell.Options[bit]);
                             if (somethingWillNotChange) continue;
-
-                         //   Console.Write($"({cell.I}, {cell.J})");
+                         
                             result = true;
                             foreach (int bit in bits)
                                 cell.Options[bit] = false;
                         }
-                     //   Console.WriteLine();
-
                     }
 
                 } while (MoveOnChooses(moveOnCells, 9));
-
             }
         }
 
         return result;
     }
-
-
-
-
 
     private static bool MoveOnChooses(int[] arr, int n)
     {
