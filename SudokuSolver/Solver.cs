@@ -17,6 +17,7 @@ public class Solver
         new HiddenPairs(),
         new HiddenTriples(),
         new HiddenQuads(),
+        new PointingPairs(),
         //new NakedTriples(),
         //new NakedQuads(),
        
