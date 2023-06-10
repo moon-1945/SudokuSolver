@@ -11,6 +11,8 @@ public class Sudoku
 
     public List<Cell> newFoundCells;
 
+    public Sudoku() { }
+
     public Sudoku(int[,] cells)
     {
         newFoundCells = new List<Cell>();   

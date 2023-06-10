@@ -18,6 +18,8 @@ public class Solver
         new HiddenTriples(),
         new HiddenQuads(),
         new PointingPairs(),
+        new XWing(),
+        new SimpleColoring(),
         //new NakedTriples(),
         //new NakedQuads(),
        
@@ -72,6 +74,8 @@ public class Solver
         var outputWriter = new StreamWriter(outputFile);
         var watch = new System.Diagnostics.Stopwatch();
 
+        long maxTimeSudoku = 0;
+
         foreach (var str in File.ReadLines("../../../data.txt"))
         {
             int[,] arr = new int[9, 9];
@@ -85,11 +89,18 @@ public class Solver
 
             var sudoku = new Sudoku(arr);
             var sudokuSolver = new Solver(sudoku);
+
+            var beg = watch.ElapsedMilliseconds;
+
             //Console.WriteLine(sudoku);
             watch.Start();
             bool isSolve = sudokuSolver.Solve();
             watch.Stop();
             //Console.WriteLine(isSolve);
+
+            var end = watch.ElapsedMilliseconds;
+
+            maxTimeSudoku = ((end - beg) > maxTimeSudoku) ? (end - beg) : maxTimeSudoku;
 
             if (!isSolve)
             {
@@ -108,6 +119,7 @@ public class Solver
 
         Console.WriteLine($"{solutions} {failed}");
         Console.WriteLine(watch.ElapsedMilliseconds * 1.0 / (solutions + failed));
+        Console.WriteLine(maxTimeSudoku);
     }
 
     public static void RunExample()
@@ -118,7 +130,7 @@ public class Solver
 
         var watch = new System.Diagnostics.Stopwatch();
 
-        var str = "010300000000000605700000900905000800000104000000200000040000020600090000000000030";
+        var str = "010037000000000010600008029070049600100000003009350070390200008040000000000790060";
         int[,] arr = new int[9, 9];
         for (int i = 0; i < 9; i++)
         {
