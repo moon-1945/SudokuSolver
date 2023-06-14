@@ -3,6 +3,7 @@ using SudokuSolver.SolveMethods.BasicStrategies;
 using SudokuSolver.SolveMethods.BasicStrategies.HiddenGroups;
 using SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
 using SudokuSolver.SolveMethods.ToughStrategies;
+using System.Collections.Generic;
 
 namespace SudokuSolver;
 
@@ -59,19 +60,42 @@ public class Solver
             else break;
         }
 
-        int sum = 0;
+        //int sum = 0;
+        //for (int i = 0; i < 9; i++)
+        //{
+        //    for (int j = 0; j < 9; j++)
+        //    {
+        //        sum += _sudoku.Rows[i][j].Value;
+        //        sum -= (i + 1);
+        //    }
+        //}
+
+        //if (sum > 0) throw new Exception("lox");
+
+
         for (int i = 0; i < 9; i++)
         {
             for (int j = 0; j < 9; j++)
             {
-                sum += _sudoku.Rows[i][j].Value;
-                sum -= (i+1);
+                if (_sudoku[i,j].Value == 0) return false;
             }
         }
 
-        if (sum > 0) throw new Exception("lox");
+        var sampleSet = new HashSet<int>(Enumerable.Range(1, 9));
+        var modes = new Cell[][][] { _sudoku.Rows, _sudoku.Columns, _sudoku.Squares };
+        for(int mode = 0; mode < 3; mode++)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                var set = new HashSet<int>(modes[mode][i].Select(c => c.Value));
+                if(set.Count != 9 || set.Intersect(sampleSet).Count() != 9)
+                {
+                    throw new Exception("Wrong answer");
+                }
+            }
+        }
 
-        return sum == 0;
+        return true;
 
     }
 
