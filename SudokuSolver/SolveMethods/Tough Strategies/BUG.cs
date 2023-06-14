@@ -5,6 +5,8 @@ public class BUG : ISolveMethod
 {
     public bool TrySolve(Sudoku sudoku)
     {
+       // Console.WriteLine(sudoku);
+
         bool result = false;
 
         Cell BCcell = FindBC(sudoku);
@@ -39,6 +41,7 @@ public class BUG : ISolveMethod
     Cell FindBC(Sudoku sudoku)
     {
         Cell res = null;
+        int count = 0;
 
         for (int i = 0; i < 9; i++)
         {
@@ -47,11 +50,15 @@ public class BUG : ISolveMethod
                 if (sudoku[i, j].Value != 0) continue;   
                 int len = sudoku[i, j].Options.GetArrayOfOnes().Length;
                 if (len == 2) continue;
-                if (len == 3) res = sudoku[i, j];
+                if (len == 3)
+                {
+                    res = sudoku[i, j];
+                    count++;
+                } 
                 else return null;
             }
         }
-
+        if (count != 1) return null;
         return res;
     }
 
