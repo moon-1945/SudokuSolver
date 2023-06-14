@@ -1,4 +1,4 @@
-﻿namespace SudokuSolver.SolveMethods;
+﻿namespace SudokuSolver.SolveMethods.BasicStrategies;
 
 public class ShowPossibles : ISolveMethod
 {

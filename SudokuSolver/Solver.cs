@@ -1,13 +1,15 @@
 ﻿using SudokuSolver.SolveMethods;
-using SudokuSolver.SolveMethods.HiddenGroups;
-using SudokuSolver.SolveMethods.NakedGroups;
+using SudokuSolver.SolveMethods.BasicStrategies;
+using SudokuSolver.SolveMethods.BasicStrategies.HiddenGroups;
+using SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
+using SudokuSolver.SolveMethods.ToughStrategies;
 
 namespace SudokuSolver;
 
 public class Solver
 {
     Sudoku _sudoku;
-    private readonly ISolveMethod[] _methods = {
+    private ISolveMethod[] _methods = {
         new CheckForSolvedCells(),
         new ShowPossibles(),
         new HidenSingle(),
@@ -20,9 +22,12 @@ public class Solver
         new PointingPairs(),
         new XWing(),
         new SimpleColoring(),
+        new YWing(),
+        new SwordFish(),
+        new XYZWing(),
+        new BUG(),
         //new NakedTriples(),
         //new NakedQuads(),
-       
     };
 
     public Solver(Sudoku sudoku) => _sudoku = sudoku;
@@ -72,11 +77,13 @@ public class Solver
 
         using var outputFile = File.Create("../../../failures.txt");
         var outputWriter = new StreamWriter(outputFile);
+        using var outputFile2 = File.Create("../../../time.txt");
+        var outputWriter2 = new StreamWriter(outputFile2);
         var watch = new System.Diagnostics.Stopwatch();
 
         long maxTimeSudoku = 0;
 
-        foreach (var str in File.ReadLines("../../../data.txt"))
+        foreach (var str in File.ReadLines("../../../data2.txt"))
         {
             int[,] arr = new int[9, 9];
             for (int i = 0; i < 9; i++)
@@ -101,6 +108,7 @@ public class Solver
             var end = watch.ElapsedMilliseconds;
 
             maxTimeSudoku = ((end - beg) > maxTimeSudoku) ? (end - beg) : maxTimeSudoku;
+            outputWriter2.WriteLine((end - beg));
 
             if (!isSolve)
             {
@@ -130,7 +138,7 @@ public class Solver
 
         var watch = new System.Diagnostics.Stopwatch();
 
-        var str = "010037000000000010600008029070049600100000003009350070390200008040000000000790060";
+        var str = "400000020000010809050000003000290010008635900090084000300000060204070000060000001";
         int[,] arr = new int[9, 9];
         for (int i = 0; i < 9; i++)
         {
@@ -166,7 +174,76 @@ public class Solver
         Console.WriteLine($"{solutions} {failed}");
         Console.WriteLine(watch.ElapsedMilliseconds * 1.0 / (solutions + failed));
     }
-    
+
+
+
+    public static void RunCheckGC()
+    {
+        int solutions = 0, failed = 0;
+
+        using var outputFile = File.Create("../../../failures.txt");
+        var outputWriter = new StreamWriter(outputFile);
+        using var outputFile2 = File.Create("../../../time.txt");
+        var outputWriter2 = new StreamWriter(outputFile2);
+        var watch = new System.Diagnostics.Stopwatch();
+
+        long maxTimeSudoku = 0;
+
+        int[,] arr1 = new int[9, 9];
+        var sudoku = new Sudoku(arr1);
+        var sudokuSolver = new Solver(sudoku);
+
+
+        foreach (var str in File.ReadLines("../../../data2.txt"))
+        {
+            int[,] arr = new int[9, 9];
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    arr[i, j] = str[9 * i + j] - '0';
+                }
+            }
+
+            sudoku.Update(arr);
+
+            //Console.WriteLine(sudoku);
+
+            var beg = watch.ElapsedMilliseconds;
+
+            //Console.WriteLine(sudoku);
+            watch.Start();
+            bool isSolve = sudokuSolver.Solve();
+            watch.Stop();
+            //Console.WriteLine(isSolve);
+
+            var end = watch.ElapsedMilliseconds;
+
+            maxTimeSudoku = ((end - beg) > maxTimeSudoku) ? (end - beg) : maxTimeSudoku;
+            outputWriter2.WriteLine((end - beg));
+
+            if (!isSolve)
+            {
+                failed++;
+                outputWriter.WriteLine(str);
+            }
+            else
+            {
+                solutions++;
+            }
+            //Console.WriteLine(sudoku);
+            //break;
+
+
+        }
+
+        Console.WriteLine($"{solutions} {failed}");
+        Console.WriteLine(watch.ElapsedMilliseconds * 1.0 / (solutions + failed));
+        Console.WriteLine(maxTimeSudoku);
+    }
+
+
+
 
 
 }

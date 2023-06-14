@@ -1,4 +1,4 @@
-﻿namespace SudokuSolver.SolveMethods.NakedGroups;
+﻿namespace SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
 
 public class NakedPairs : NakedGroups, ISolveMethod
 {

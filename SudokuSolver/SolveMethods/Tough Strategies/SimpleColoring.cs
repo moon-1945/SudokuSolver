@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Numerics;
-using System.Reflection.Metadata.Ecma335;
-
-namespace SudokuSolver.SolveMethods;
+﻿
+namespace SudokuSolver.SolveMethods.ToughStrategies;
 
 public class SimpleColoring : ISolveMethod
 {
@@ -17,7 +13,7 @@ public class SimpleColoring : ISolveMethod
 
         HashSet<CellVertice>[] cellRemoveBit = CellsToRemoveBit(sudokuGraph);
 
-        RemoveBits(sudoku, cellRemoveBit);
+        RemoveBits(sudokuGraph, cellRemoveBit);
 
         bool[] endBools = ToBoolArray(sudoku);
 
@@ -44,7 +40,7 @@ public class SimpleColoring : ISolveMethod
                 {
                     CellVertice cell = sudokuGraph[i,j];
 
-                    if (cell.Value != 0) continue;
+                    if (cell.cell.Value != 0) continue;
 
                     int[] colorOfNeighbors = new int[cell.neighborsOnCommonBits[bit].Count]
                         .Select((elem, index) => cell.neighborsOnCommonBits[bit][index].color[bit])
@@ -74,22 +70,24 @@ public class SimpleColoring : ISolveMethod
 
         return result;
     }
-    private void RemoveBits(Sudoku sudoku, HashSet<CellVertice>[] cellRemoveBit)
+    private void RemoveBits(SudokuGraph sudoku, HashSet<CellVertice>[] verticeRemoveBit)
     {
         for (int bit = 0; bit < 9; bit++)
         {
-            foreach(var cell in cellRemoveBit[bit])
+            foreach(var vertice in verticeRemoveBit[bit])
             {
-                sudoku.Rows[cell.I][cell.J].Options[bit] = false;
+                vertice.cell.Options[bit] = false;
             }
         }
     }
 }
 
-internal class CellVertice : Cell
+internal class CellVertice
 {
-    public CellVertice(int i, int j, int value, BitArray options) : base(i, j, value, options)
+    public Cell cell;
+    public CellVertice(Cell cell)
     {
+        this.cell = cell;
         neighborsOnGraph = new HashSet<CellVertice>[9];
         for (int k = 0; k < 9; k++)
         {
@@ -111,19 +109,19 @@ internal class CellVertice : Cell
     public bool IsColored(int bit) => color[bit] != -1;
 }
 
-internal class SudokuGraph : Sudoku
+internal class SudokuGraph
 {
-    public new CellVertice[][] newRows;
-    public new CellVertice[][] newColumns;
-    public new CellVertice[][] newSquares;
+    Sudoku sudoku;
 
-    public CellVertice this[int i,int j] => newRows[i][j];
+    public CellVertice[][] newRows;
+    public CellVertice[][] newColumns;
+    public CellVertice[][] newSquares;
+
+    public new CellVertice this[int i,int j] => newRows[i][j];
 
     public SudokuGraph(Sudoku sudoku)
     {
-        Rows = sudoku.Rows;
-        Columns = sudoku.Columns;
-        Squares = sudoku.Squares;
+        this.sudoku = sudoku;
 
         newRows = new CellVertice[9][];
         newColumns = new CellVertice[9][];
@@ -140,12 +138,7 @@ internal class SudokuGraph : Sudoku
         {
             for (int j = 0; j < 9; j++)
             {
-
-
-                CellVertice cell = new CellVertice(sudoku.Rows[i][j].I,
-                    sudoku.Rows[i][j].J,
-                    sudoku.Rows[i][j].Value,
-                    sudoku.Rows[i][j].Options);
+                CellVertice cell = new CellVertice(sudoku.Rows[i][j]);
 
                 newRows[i][j] = cell;
                 newColumns[j][i] = cell;
@@ -161,7 +154,7 @@ internal class SudokuGraph : Sudoku
             {
                 for (int i = 0; i < 9; i++)
                 {
-                    bool[] boolsMask = new bool[9].Select((elem, index) => cellModes[mode][i][index].Options[bit]).ToArray();
+                    bool[] boolsMask = new bool[9].Select((elem, index) => cellModes[mode][i][index].cell.Options[bit]).ToArray();
                     BitArray bitMask = new BitArray(boolsMask);
 
                     int[] numbersOfCells = bitMask.GetArrayOfOnes();
@@ -200,7 +193,6 @@ internal class SudokuGraph : Sudoku
     }
     public void ColorGraph()
     {
-        
         for (int bit = 0; bit < 9; bit++)
         {
             int color = 1;

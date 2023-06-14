@@ -2,7 +2,7 @@
 
 using System.Linq.Expressions;
 
-namespace SudokuSolver.SolveMethods;
+namespace SudokuSolver.SolveMethods.BasicStrategies;
 
 internal class PointingPairs : ISolveMethod
 {

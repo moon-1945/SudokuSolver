@@ -1,5 +1,5 @@
 ﻿
-namespace SudokuSolver.SolveMethods;
+namespace SudokuSolver.SolveMethods.ToughStrategies;
 
 public class XWing : ISolveMethod
 {
@@ -31,7 +31,7 @@ public class XWing : ISolveMethod
         {
             for (int j = i + 1; j < 9; j++)
             {
-                for (int mode = 0; mode < 1; mode++)
+                for (int mode = 0; mode < 2; mode++)
                 {
                     for (int bit = 0; bit < 9; bit++)
                     {

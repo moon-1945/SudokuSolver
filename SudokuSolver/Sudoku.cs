@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace SudokuSolver;
@@ -10,6 +11,8 @@ public class Sudoku
     public Cell[][] Squares;
 
     public List<Cell> newFoundCells;
+
+    public Cell this[int i,int j] => Rows[i][j];
 
     public Sudoku() { }
 
@@ -182,6 +185,36 @@ public class Sudoku
 
         return c == 1 ? cell : null;
     }
+
+
+    public void Update(int[,] cells)
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                this[i, j].Value = cells[i, j];
+                
+                if (cells[i, j] == 0)
+                {
+                    for (int k = 0; k < 9; k++)
+                    {
+                        this[i, j].Options[k] = true;
+                    }
+                }
+                else
+                {
+                    for (int k = 0; k < 9; k++)
+                    {
+                        this[i, j].Options[k] = false;
+                    }
+                }
+            }
+        }
+
+        newFoundCells.Clear();
+    }
+
 }
 
 

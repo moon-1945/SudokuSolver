@@ -1,4 +1,4 @@
-﻿namespace SudokuSolver.SolveMethods.HiddenGroups;
+﻿namespace SudokuSolver.SolveMethods.BasicStrategies.HiddenGroups;
 
 public class HiddenQuads : HiddenGroups, ISolveMethod
 {

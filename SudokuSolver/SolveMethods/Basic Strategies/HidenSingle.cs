@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace SudokuSolver.SolveMethods;
+namespace SudokuSolver.SolveMethods.BasicStrategies;
 
 public class HidenSingle : ISolveMethod
 {
