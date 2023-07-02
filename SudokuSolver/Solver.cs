@@ -31,7 +31,7 @@ public class Solver
         new XYZWing(),
         new BUG(),
         new XCycles(),
-        new XYChains(),
+       // new XYChainsRecursive(),
         //new NakedTriples(),
         //new NakedQuads(),
     };
@@ -159,7 +159,7 @@ public class Solver
 
         var watch = new System.Diagnostics.Stopwatch();
 
-        var str = "003001000800000000051009060080000290000700080200040503600900000002084000410050600";
+        var str = "100500800000030000000000000020000043700809000000000060603040000000700100050000000";
 
         var sudoku = new Sudoku(str);
         var sudokuSolver = new Solver(sudoku);

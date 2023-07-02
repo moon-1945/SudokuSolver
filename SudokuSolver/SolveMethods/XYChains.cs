@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace SudokuSolver.SolveMethods;
 
 internal class XYChains : ISolveMethod
@@ -29,6 +30,8 @@ internal class XYChains : ISolveMethod
             }
         }
 
+        if (vertices.Count == 0) return false;
+
         PathEnds[][] pathEnds = new PathEnds[vertices.Count][];
         for (int i = 0; i < pathEnds.Length; i++)
         {
@@ -46,53 +49,55 @@ internal class XYChains : ISolveMethod
         //    Console.WriteLine($"{c.first + 1} {c.second + 1}");
         //}
 
-        var reachibilityMatrix = new Graph<PathEnds>(pathEnds).GetMatrixReachability();
+       // Console.WriteLine(sudoku);
+
+        var reachibilityMatrix = new Matrix<PathEnds>(pathEnds).CalculateReachabilityMatrix();
 
          // var reachibilityMatrix = reachibilityMatrix1 * reachibilityMatrix1;
 
-        Console.WriteLine();
-        for (int i = 0; i < reachibilityMatrix.Rows; i++)
-        {
-            for (int j = 0; j < reachibilityMatrix.Columns; j++)
-            {
-                Console.WriteLine($"({reachibilityMatrix[i, j].Begin.cell.I + 1} {reachibilityMatrix[i, j].Begin.cell.J + 1}) " +
-                    $"({reachibilityMatrix[i, j].End.cell.I + 1} {reachibilityMatrix[i, j].End.cell.J + 1})");
-
-                foreach (var c in reachibilityMatrix[i, j].EndsOfPath)
-                {
-                    Console.WriteLine($"{c.first + 1} {c.second + 1}");
-                }
-            }
-        }
-        Console.WriteLine();
-
-        //for (int i = 0; i < vertices.Count; i++)
+        //Console.WriteLine();
+        //for (int i = 0; i < reachibilityMatrix.Rows; i++)
         //{
-        //    for (int j = i + 1; j < vertices.Count; j++)
+        //    for (int j = 0; j < reachibilityMatrix.Columns; j++)
         //    {
+        //        Console.WriteLine($"({reachibilityMatrix[i, j].Begin.cell.I + 1} {reachibilityMatrix[i, j].Begin.cell.J + 1}) " +
+        //            $"({reachibilityMatrix[i, j].End.cell.I + 1} {reachibilityMatrix[i, j].End.cell.J + 1})");
+
         //        foreach (var c in reachibilityMatrix[i, j].EndsOfPath)
         //        {
-        //            if (c.first != c.second) continue;
-
-        //            Console.WriteLine($"({reachibilityMatrix[i, j].Begin.cell.I + 1} {reachibilityMatrix[i, j].Begin.cell.J + 1}) " +
-        //        $"({reachibilityMatrix[i, j].End.cell.I + 1} {reachibilityMatrix[i, j].End.cell.J + 1}) {c.first + 1}");
-
-        //            HashSet<CellVertice> cellVertices = sudokuGraph.Intersection(reachibilityMatrix[i,j].Begin, reachibilityMatrix[i, j].End, c.first);
-
-        //            foreach (var cellVertice in cellVertices)
-        //            {
-        //                cellVertice.cell.Options[c.first] = false;
-        //            }
-
-
+        //            Console.WriteLine($"{c.first + 1} {c.second + 1}");
         //        }
         //    }
         //}
+        //Console.WriteLine();
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            for (int j = i + 1; j < vertices.Count; j++)
+            {
+                foreach (var c in reachibilityMatrix[i, j].EndsOfPath)
+                {
+                    if (c.first != c.second) continue;
+
+                //    Console.WriteLine($"({reachibilityMatrix[i, j].Begin.cell.I + 1} {reachibilityMatrix[i, j].Begin.cell.J + 1}) " +
+                //$"({reachibilityMatrix[i, j].End.cell.I + 1} {reachibilityMatrix[i, j].End.cell.J + 1}) {c.first + 1}");
+
+                    HashSet<CellVertice> cellVertices = sudokuGraph.Intersection(reachibilityMatrix[i, j].Begin, reachibilityMatrix[i, j].End, c.first);
+
+                    foreach (var cellVertice in cellVertices)
+                    {
+                        cellVertice.cell.Options[c.first] = false;
+                    }
+
+
+                }
+            }
+        }
 
 
         bool[] endBools = ToBoolArray(sudoku);
 
-        return false;
+        return !((IStructuralEquatable)beginBools).Equals(endBools, EqualityComparer<bool>.Default);
     }
 
     bool[] ToBoolArray(Sudoku sudoku)
@@ -110,7 +115,6 @@ class PathEnds : IAdditionOperators<PathEnds, PathEnds, PathEnds>, IMultiplyOper
     public CellVertice End { get; init; }
 
     private PathEnds() { }
-    //  public PathEnds(HashSet<(int first, int second)> endsOfPath) => this.EndsOfPath = endsOfPath;
 
     public PathEnds(CellVertice cell1, CellVertice cell2)
     {
@@ -138,7 +142,7 @@ class PathEnds : IAdditionOperators<PathEnds, PathEnds, PathEnds>, IMultiplyOper
         cell2Options[0] == commonOptions[0] ? cell2Options[1] : cell2Options[0]) } :
 
         (commonOptions.Length == 2) ?
-        new HashSet<(int first, int second)> { (cell1Options[0], cell1Options[1]), (cell1Options[1], cell1Options[0]) } :
+        new HashSet<(int first, int second)> { (cell1Options[0], cell1Options[0]), (cell1Options[1], cell1Options[1]) } :
 
         new HashSet<(int first, int second)>();
 
@@ -175,7 +179,7 @@ class PathEnds : IAdditionOperators<PathEnds, PathEnds, PathEnds>, IMultiplyOper
 
 
 
-class Matrix<T> :
+public class Matrix<T> :
     IAdditionOperators<Matrix<T>, Matrix<T>, Matrix<T>>,
     IMultiplyOperators<Matrix<T>, Matrix<T>, Matrix<T>> where T : IAdditionOperators<T, T, T>, IMultiplyOperators<T, T, T>
 {
@@ -234,30 +238,20 @@ class Matrix<T> :
     }
 }
 
-class Graph<T> where T : IAdditionOperators<T, T, T>, IMultiplyOperators<T, T, T>
+public static class AdjacencyMatrixExtension
 {
-
-    public Matrix<T> adjMatrix { get; init; }
-    public int numberOfVertices { get; init; }
-    public Graph(T[][] adjMatrix)
+    public static Matrix<T> CalculateReachabilityMatrix<T>(this Matrix<T> matrix)
+        where T : IAdditionOperators<T, T, T>, IMultiplyOperators<T, T, T>
     {
-        var matr = new Matrix<T>(adjMatrix);
-        if (matr.Rows != matr.Columns) throw new Exception();
-        this.adjMatrix = matr;
-        numberOfVertices = matr.Rows;
-    }
+        Matrix<T> reachability = matrix;
 
-    public Matrix<T> GetMatrixReachability()
-    {
-        Matrix<T> reachability = adjMatrix;
-        for (int i = 0; i < numberOfVertices; i++)
+        for (int i = 0; i < matrix.Rows - 1; i++)
         {
-            reachability = reachability * adjMatrix + adjMatrix;
+            reachability = reachability * matrix + matrix;
         }
 
         return reachability;
     }
-
 }
 
 
