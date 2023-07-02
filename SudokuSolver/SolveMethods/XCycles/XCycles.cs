@@ -15,9 +15,9 @@ internal class XCycles : ISolveMethod
         for (int bit = 0; bit < 9; bit++)
         {
             CellVertice[][] cycles = sudokuGraph.FindAllCycles(bit);
-            Console.WriteLine($"{bit + 1}");
-            Console.WriteLine(string.Join("\n", cycles.Select(c => string.Join(", ", c.Select(cc => $"({cc.cell.I + 1},{cc.cell.J + 1})")))));
-            Console.WriteLine();
+            //Console.WriteLine($"{bit + 1}");
+            //Console.WriteLine(string.Join("\n", cycles.Select(c => string.Join(", ", c.Select(cc => $"({cc.cell.I + 1},{cc.cell.J + 1})")))));
+            //Console.WriteLine();
             for (int i = 0; i < cycles.Length; i++)
             {
                 var cycle = cycles[i];
@@ -55,7 +55,7 @@ internal class XCycles : ISolveMethod
                     CellVertice cell = null;
                     int size = 0;
 
-                    for (int j = 0; j < 2 * cycle.Length; j += 2)
+                    for (int j = 0; j <= 2 * cycle.Length; j += 2)
                     {
                         _ = sudokuGraph.IsConnected(cycle[j % cycle.Length], cycle[(j + 1) % cycle.Length], bit) == 2 ? size++ : size = 0;
 
