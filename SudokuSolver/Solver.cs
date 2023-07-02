@@ -5,6 +5,7 @@ using SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
 using SudokuSolver.SolveMethods.ToughStrategies;
 using SudokuSolver.SolveMethods.ToughStrategies.SimpleColoring;
 using SudokuSolver.SolveMethods.XCycles;
+using SudokuSolver.SolveMethods.XYChains;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 
@@ -31,7 +32,7 @@ public class Solver
         new XYZWing(),
         new BUG(),
         new XCycles(),
-        new XYChainsRecursive(),
+        new XYChains(),
         //new NakedTriples(),
         //new NakedQuads(),
     };

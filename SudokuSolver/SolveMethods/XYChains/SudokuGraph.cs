@@ -1,54 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SudokuSolver.SolveMethods;
-
-internal class XYChainsRecursive : ISolveMethod
-{
-    public bool TrySolve(Sudoku sudoku)
-    {
-        bool[] beginBools = ToBoolArray(sudoku);
-
-        SudokuGraph sudokuGraph = new SudokuGraph(sudoku);
-
-        var ends = sudokuGraph.GetXYChainsEnds();
-
-        foreach (var end in ends )
-        {
-            HashSet<CellVertice> cellVertices = sudokuGraph.Intersection(end.first, end.second, end.bit);
-
-            foreach (var cellVertice in cellVertices )
-            {
-                cellVertice.cell.Options[end.bit] = false;
-            }
-        }
-
-        bool[] endBools = ToBoolArray(sudoku);
-
-        return !((IStructuralEquatable)beginBools).Equals(endBools, EqualityComparer<bool>.Default);
-    }
-
-    bool[] ToBoolArray(Sudoku sudoku)
-    {
-        return new bool[729].Select((ElementInit, index) => sudoku.Rows[index / 81][(index - index / 81 * 81) / 9]
-        .Options[index % 9]).ToArray();
-    }
-
-}
-
-class CellVertice
-{
-    public Cell cell;
-
-    public CellVertice(Cell cell) => this.cell = cell;
-
-    public HashSet<CellVertice> neighbors = new HashSet<CellVertice>();
-}
-
+﻿namespace SudokuSolver.SolveMethods.XYChains;
 
 class SudokuGraph
 {
@@ -85,7 +35,7 @@ class SudokuGraph
 
                 newRows[i][j] = cell;
                 newColumns[j][i] = cell;
-                newSquares[3 * (i / 3) + (j / 3)][3 * (i % 3) + j % 3] = cell;
+                newSquares[3 * (i / 3) + j / 3][3 * (i % 3) + j % 3] = cell;
             }
         }
 
@@ -142,11 +92,11 @@ class SudokuGraph
 
 
     public void GetXYChainsEndsOfCellRecursive(
-        CellVertice current, 
-        List<CellVertice> path, 
-        int firstnum, 
-        int secondnum, 
-        HashSet<(CellVertice first ,CellVertice second ,int bit)> ends)
+        CellVertice current,
+        List<CellVertice> path,
+        int firstnum,
+        int secondnum,
+        HashSet<(CellVertice first, CellVertice second, int bit)> ends)
     {
         for (int i = 0; i < path.Count; i++)
         {
@@ -170,10 +120,10 @@ class SudokuGraph
             if (path.Count == 1)
             {
                 int[] common = lastOptions.Intersect(currentOptions).ToArray();
-                if (common.Length == 1) 
+                if (common.Length == 1)
                 {
-                    newfirstnum = (lastOptions[0] == common[0]) ? lastOptions[1] : lastOptions[0];
-                    newsecondnum = (currentOptions[0] == common[0]) ? currentOptions[1] : currentOptions[0];
+                    newfirstnum = lastOptions[0] == common[0] ? lastOptions[1] : lastOptions[0];
+                    newsecondnum = currentOptions[0] == common[0] ? currentOptions[1] : currentOptions[0];
                     newNumbers.Add((newfirstnum, newsecondnum));
                 }
                 else if (common.Length == 2)
@@ -189,15 +139,15 @@ class SudokuGraph
             else
             {
                 if (!currentOptions.Contains(secondnum)) return;
-                newsecondnum = (currentOptions[0] == secondnum) ? currentOptions[1] : currentOptions[0];
+                newsecondnum = currentOptions[0] == secondnum ? currentOptions[1] : currentOptions[0];
                 newNumbers.Add((newfirstnum, newsecondnum));
             }
-            
+
 
             path.Add(current);
         }
 
-      
+
 
 
         for (int i = 0; i < newNumbers.Count; i++)
@@ -209,10 +159,10 @@ class SudokuGraph
 
             foreach (var neighbor in current.neighbors)
             {
-                GetXYChainsEndsOfCellRecursive(neighbor, path, newNumbers[i].first, newNumbers[i].second , ends);
+                GetXYChainsEndsOfCellRecursive(neighbor, path, newNumbers[i].first, newNumbers[i].second, ends);
             }
         }
-       
+
 
 
         path.Remove(current);
@@ -226,7 +176,7 @@ class SudokuGraph
         {
             for (int j = 0; j < 9; j++)
             {
-                GetXYChainsEndsOfCellRecursive(this[i,j],new(),-1,-1,ends);
+                GetXYChainsEndsOfCellRecursive(this[i, j], new(), -1, -1, ends);
             }
         }
 
