@@ -34,7 +34,7 @@ public abstract class NakedGroups
 
                     }
 
-                    if ((bits = bitArrayOfCells.GetArrayOfOnes()).Length == groupSize)
+                    if ((bits = bitArrayOfCells.ToIndicesArray()).Length == groupSize)
                     {
                         foreach (var cell in cells)
                         {

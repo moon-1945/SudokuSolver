@@ -1,6 +1,6 @@
 ﻿using SudokuSolver.SolveMethods.XCycles;
 
-namespace SudokuSolver.SolveMethods;
+namespace SudokuSolver.SolveMethods.XCycles;
 
 class SudokuGraph
 {
@@ -57,7 +57,7 @@ class SudokuGraph
                     bool[] boolsMask = new bool[9].Select((elem, index) => cellModes[mode][i][index].cell.Options[bit]).ToArray();
                     BitArray bitMask = new BitArray(boolsMask);
 
-                    int[] numbersOfCells = bitMask.GetArrayOfOnes();
+                    int[] numbersOfCells = bitMask.ToIndicesArray();
 
                     if (numbersOfCells.Length == 2)
                     {

@@ -4,20 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SudokuSolver;
 
-
-public static class BitArrayExtension
-{
-    public static int[] GetArrayOfOnes(this BitArray bitArray)
-    {
-        List<int> result = new List<int>(9);
-        for (int i = 0; i < 9; i++)
-        {
-            if (bitArray[i]) result.Add(i);
-        }
-        return result.ToArray();
-    }
-}
-
 public class Cell
 {
     public int I { get; }
@@ -26,8 +12,6 @@ public class Cell
 
     public int Value;
     public BitArray Options;
-
-    //public bool isSolvedAndChecked = false;
 
     private static readonly string[][] Digits = {
     new[]{ "   . ", "  /| ", "   | " },
@@ -49,6 +33,8 @@ public class Cell
         Value = value;
         Options = options;
     }
+
+    public Cell() { }
 
     public string[] ToOutput()
         => Value != 0

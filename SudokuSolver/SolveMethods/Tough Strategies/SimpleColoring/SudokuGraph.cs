@@ -49,7 +49,7 @@ internal class SudokuGraph
                     bool[] boolsMask = new bool[9].Select((elem, index) => cellModes[mode][i][index].cell.Options[bit]).ToArray();
                     BitArray bitMask = new BitArray(boolsMask);
 
-                    int[] numbersOfCells = bitMask.GetArrayOfOnes();
+                    int[] numbersOfCells = bitMask.ToIndicesArray();
 
                     for (int i1 = 0; i1 < numbersOfCells.Length; i1++)
                     {

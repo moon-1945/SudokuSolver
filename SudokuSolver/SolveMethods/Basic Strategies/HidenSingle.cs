@@ -13,25 +13,36 @@ public class HidenSingle : ISolveMethod
                 Cell? cell;
                 if ((cell = sudoku.GetSingleOrNull(sudoku.Rows[k], numBit)) != null)
                 {
-                    sudoku.newFoundCells.Add(cell);
-                    cell.Value = numBit + 1;
+                    //sudoku.newFoundCells.Add(cell);
+                    //cell.Value = numBit + 1;
+                    //cell.Options = new BitArray(9);
+                    //return true;
+                    //sudoku.newFoundCells.Add(cell);
+                    //cell.Value = numBit + 1;
                     cell.Options = new BitArray(9);
+                    cell.Options[numBit] = true;
                     return true;
                 }
 
                 if ((cell = sudoku.GetSingleOrNull(sudoku.Columns[k], numBit)) != null)
                 {
-                    sudoku.newFoundCells.Add(cell);
-                    cell.Value = numBit + 1;
+                    //sudoku.newFoundCells.Add(cell);
+                    //cell.Value = numBit + 1;
+                    //cell.Options = new BitArray(9);
+                    //return true;
                     cell.Options = new BitArray(9);
+                    cell.Options[numBit] = true;
                     return true;
                 }
 
                 if ((cell = sudoku.GetSingleOrNull(sudoku.Squares[k], numBit)) != null)
                 {
-                    sudoku.newFoundCells.Add(cell);
-                    cell.Value = numBit + 1;
+                    //sudoku.newFoundCells.Add(cell);
+                    //cell.Value = numBit + 1;
+                    //cell.Options = new BitArray(9);
+                    //return true;
                     cell.Options = new BitArray(9);
+                    cell.Options[numBit] = true;
                     return true;
                 }
             }

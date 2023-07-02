@@ -5,7 +5,8 @@ using SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
 using SudokuSolver.SolveMethods.ToughStrategies;
 using SudokuSolver.SolveMethods.ToughStrategies.SimpleColoring;
 using SudokuSolver.SolveMethods.XCycles;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.IO.Compression;
 
 namespace SudokuSolver;
 
@@ -30,13 +31,14 @@ public class Solver
         new XYZWing(),
         new BUG(),
         new XCycles(),
+        new XYChains(),
         //new NakedTriples(),
         //new NakedQuads(),
     };
 
     public Solver(Sudoku sudoku) => _sudoku = sudoku;
 
-    public bool Solve()
+    public Sudoku Solve()
     {
 
         //new ShowPossibles().TrySolve(_sudoku);
@@ -44,12 +46,12 @@ public class Solver
         while (true)
         {
             bool a = false;
-            foreach (var method in _methods) 
+            foreach (var method in _methods)
             {
                 if (method.TrySolve(_sudoku))
                 {
-                     //Console.WriteLine(method.GetType());
-                   // Console.WriteLine(_sudoku);
+                    //Console.WriteLine(method.GetType());
+                    // Console.WriteLine(_sudoku);
                     //if (method is NakedPairs) Console.WriteLine(method.GetType());
                     //if (method is not ShowPossibles && method is not CheckForSolvedCells)
                     //    Console.WriteLine(method.GetType());
@@ -63,42 +65,7 @@ public class Solver
             else break;
         }
 
-        //int sum = 0;
-        //for (int i = 0; i < 9; i++)
-        //{
-        //    for (int j = 0; j < 9; j++)
-        //    {
-        //        sum += _sudoku.Rows[i][j].Value;
-        //        sum -= (i + 1);
-        //    }
-        //}
-
-        //if (sum > 0) throw new Exception("lox");
-
-
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                if (_sudoku[i,j].Value == 0) return false;
-            }
-        }
-
-        var sampleSet = new HashSet<int>(Enumerable.Range(1, 9));
-        var modes = new Cell[][][] { _sudoku.Rows, _sudoku.Columns, _sudoku.Squares };
-        for(int mode = 0; mode < 3; mode++)
-        {
-            for (int i = 0; i < 9; i++)
-            {
-                var set = new HashSet<int>(modes[mode][i].Select(c => c.Value));
-                if(set.Count != 9 || set.Intersect(sampleSet).Count() != 9)
-                {
-                    throw new Exception("Wrong answer");
-                }
-            }
-        }
-
-        return true;
+        return _sudoku;
 
     }
 
@@ -109,99 +76,100 @@ public class Solver
         int solutions = 0, failed = 0;
 
         using var outputFile = File.Create("../../../failures.txt");
-        var outputWriter = new StreamWriter(outputFile);
+        using var outputWriter = new StreamWriter(outputFile);
         using var outputFile2 = File.Create("../../../time.txt");
-        var outputWriter2 = new StreamWriter(outputFile2);
+        using var outputWriter2 = new StreamWriter(outputFile2);
+        using var outputFile3 = File.Create("../../../timeSorted.txt");
+        using var outputWriter3 = new StreamWriter(outputFile3);
+
         var watch = new System.Diagnostics.Stopwatch();
 
         long maxTimeSudoku = 0;
 
-        foreach (var str in File.ReadLines("../../../data2.txt"))
+        List<long> time = new List<long>();
+
+        int count = 0;
+        foreach ((string unsolved, string solved) in File.ReadLines("../../../data2.txt").Zip(File.ReadLines("../../../solutions.txt")))
         {
-            
-            
-            try
+            count++;
+            for (int i = 0; i < 81; i++)
             {
-                int[,] arr = new int[9, 9];
-                for (int i = 0; i < 9; i++)
-                {
-                    for (int j = 0; j < 9; j++)
-                    {
-                        arr[i, j] = str[9 * i + j] - '0';
-                    }
-                }
-
-                var sudoku = new Sudoku(arr);
-                var sudokuSolver = new Solver(sudoku);
-
-                var beg = watch.ElapsedMilliseconds;
-
-                numberOfSudoku++;
-
-                //Console.WriteLine(sudoku);
-                watch.Start();
-
-                bool isSolve = sudokuSolver.Solve();
-
-                watch.Stop();
-                //Console.WriteLine(isSolve);
-
-                var end = watch.ElapsedMilliseconds;
-
-                maxTimeSudoku = ((end - beg) > maxTimeSudoku) ? (end - beg) : maxTimeSudoku;
-                outputWriter2.WriteLine((end - beg));
-
-                if (!isSolve)
-                {
-                    failed++;
-                    outputWriter.WriteLine(str);
-                }
-                else
-                {
-                    solutions++;
-                }
-                //Console.WriteLine(sudoku);
-                //break;
+                if (unsolved[i] == '0') continue;
+                if (unsolved[i] != solved[i]) throw new Exception($"wrong solution ");
             }
-            catch (Exception ex)
+
+            var sudoku = new Sudoku(unsolved);
+            var sudokuSolver = new Solver(sudoku);
+
+            var beg = watch.ElapsedMilliseconds;
+
+            numberOfSudoku++;
+
+            //Console.WriteLine(sudoku);
+            watch.Start();
+
+            Sudoku outSudoku = sudokuSolver.Solve();
+
+            watch.Stop();
+            //Console.WriteLine(isSolve);
+
+            var end = watch.ElapsedMilliseconds;
+
+
+            maxTimeSudoku = ((end - beg) > maxTimeSudoku) ? (end - beg) : maxTimeSudoku;
+            outputWriter2.WriteLine((end - beg));
+
+            time.Add(end - beg);
+
+            string outSudokuCode = outSudoku.ConvertToStr();
+
+            for (int i = 0; i < 81; i++)
             {
-                Console.WriteLine($"{str}");
+                if (outSudokuCode[i] == '0') continue;
+                if (outSudokuCode[i] != solved[i]) { throw new Exception("dffdf"); }
             }
-    
+
+            if (!outSudoku.IsSolved())
+            {
+                failed++;
+                outputWriter.WriteLine(unsolved);
+            }
+            else
+            {
+                solutions++;
+            }
+        }
+
+        time = time.OrderBy((x) => -x).ToList();
+
+        for (int i = 0; i < time.Count; i++)
+        {
+            outputWriter3.WriteLine(time[i]);
         }
 
         Console.WriteLine($"{solutions} {failed}");
         Console.WriteLine(watch.ElapsedMilliseconds * 1.0 / (solutions + failed));
         Console.WriteLine(maxTimeSudoku);
+        Console.WriteLine(count);
     }
 
     public static void RunExample()
     {
         int solutions = 0, failed = 0;
 
-
-
         var watch = new System.Diagnostics.Stopwatch();
 
-        var str = "200074000060000300000000000030100000008000004000002070704000050000630000000000100";
-        int[,] arr = new int[9, 9];
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                arr[i, j] = str[9 * i + j] - '0';
-            }
-        }
+        var str = "003001000800000000051009060080000290000700080200040503600900000002084000410050600";
 
-        var sudoku = new Sudoku(arr);
+        var sudoku = new Sudoku(str);
         var sudokuSolver = new Solver(sudoku);
         //Console.WriteLine(sudoku);
         watch.Start();
-        bool isSolve = sudokuSolver.Solve();
+        Sudoku outSudoku = sudokuSolver.Solve();
         watch.Stop();
         //Console.WriteLine(isSolve);
 
-        if (!isSolve)
+        if (!outSudoku.IsSolved())
         {
             failed++;
 
@@ -220,81 +188,59 @@ public class Solver
         Console.WriteLine(watch.ElapsedMilliseconds * 1.0 / (solutions + failed));
     }
 
+    public static void CheckSolution()
+    {
+        var str = "100503000020000740000900000080060070000100003000000000000020800300000009500000000";
+
+        var sudoku = new Sudoku(str);
+
+        var watch = new System.Diagnostics.Stopwatch();
+
+        watch.Start();
+        var solve = new Recursion().Solve(sudoku);
+        Console.WriteLine(solve);
+        watch.Stop();
+
+        Console.WriteLine(watch.ElapsedMilliseconds);
+        Console.WriteLine(solve.ConvertToStr());
+    }
 
 
-    //public static void RunCheckGC()
-    //{
-    //    int solutions = 0, failed = 0;
+    public static void CreateSolutions()
+    {
+        using var outputFile = File.Create("../../../solutions.txt");
+        using var outputWriter = new StreamWriter(outputFile);
+        int count = 0;
 
-    //    using var outputFile = File.Create("../../../failures.txt");
-    //    var outputWriter = new StreamWriter(outputFile);
-    //    using var outputFile2 = File.Create("../../../time.txt");
-    //    var outputWriter2 = new StreamWriter(outputFile2);
-    //    var watch = new System.Diagnostics.Stopwatch();
+        foreach (var str in File.ReadLines("../../../data2.txt"))
+        {   
+            count++;
+            var sudoku = new Sudoku(str);
 
-    //    long maxTimeSudoku = 0;
+            outputWriter.WriteLine(new Recursion().Solve(sudoku).ConvertToStr());
+        }
+    }
 
-    //    int[,] arr1 = new int[9, 9];
-    //    var sudoku = new Sudoku(arr1);
-    //    var sudokuSolver = new Solver(sudoku);
+    public static void CheckSolutions()
+    {
 
+        int count = 0;
+        foreach ((string unsolved, string solved) in File.ReadLines("../../../data2.txt").Zip(File.ReadLines("../../../solutions.txt")))
+        {
+            count++;
+            if (unsolved.Length != 81 || solved.Length != 81) throw new Exception("wrong string");
 
-    //    foreach (var str in File.ReadLines("../../../data2.txt"))
-    //    {
-    //        int[,] arr = new int[9, 9];
-    //        for (int i = 0; i < 9; i++)
-    //        {
-    //            for (int j = 0; j < 9; j++)
-    //            {
-    //                arr[i, j] = str[9 * i + j] - '0';
-    //            }
-    //        }
+            for (int i = 0; i < 81; i++)
+            {
+                if (unsolved[i] == '0') continue;
+                if (unsolved[i] != solved[i]) throw new Exception($"wrong solution {count}");
+            }
 
-    //        sudoku.Update(arr);
+            var sudokuSolved = new Sudoku(solved);
 
-    //        //Console.WriteLine(sudoku);
-
-    //        var beg = watch.ElapsedMilliseconds;
-
-    //        //Console.WriteLine(sudoku);
-    //        watch.Start();
-    //        bool isSolve = sudokuSolver.Solve();
-    //        watch.Stop();
-    //        //Console.WriteLine(isSolve);
-
-    //        var end = watch.ElapsedMilliseconds;
-
-    //        maxTimeSudoku = ((end - beg) > maxTimeSudoku) ? (end - beg) : maxTimeSudoku;
-    //        outputWriter2.WriteLine((end - beg));
-
-    //        if (!isSolve)
-    //        {
-    //            failed++;
-    //            outputWriter.WriteLine(str);
-    //        }
-    //        else
-    //        {
-    //            solutions++;
-    //        }
-    //        //Console.WriteLine(sudoku);
-    //        //break;
-
-
-    //    }
-
-    //    Console.WriteLine($"{solutions} {failed}");
-    //    Console.WriteLine(watch.ElapsedMilliseconds * 1.0 / (solutions + failed));
-    //    Console.WriteLine(maxTimeSudoku);
-    //}
-
-
-
-
+            if (!sudokuSolved.IsSolved()) throw new Exception($"wrong solution {count}");
+        }
+    }
 
 }
-
-
-
-
-
 

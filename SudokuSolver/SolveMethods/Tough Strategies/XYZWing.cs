@@ -11,7 +11,7 @@ public class XYZWing : ISolveMethod
         {
             for (int j = 0; j < 9; j++)
             {
-                int[] XYZ = sudoku[i, j].Options.GetArrayOfOnes();
+                int[] XYZ = sudoku[i, j].Options.ToIndicesArray();
                 if (XYZ.Length != 3) continue;
 
                 List<Cell> neighborCells = GetConnectedSells(sudoku, sudoku[i, j]);
@@ -20,7 +20,7 @@ public class XYZWing : ISolveMethod
 
                 for (int k = 0; k < neighborCells.Count; k++)
                 {
-                    int[] bits = neighborCells[k].Options.GetArrayOfOnes();
+                    int[] bits = neighborCells[k].Options.ToIndicesArray();
                     if (bits.Length != 2) continue;
 
                     if (XYZ[0] == bits[0] && XYZ[1] == bits[1]) pairsXYZ[2].Add(neighborCells[k]);

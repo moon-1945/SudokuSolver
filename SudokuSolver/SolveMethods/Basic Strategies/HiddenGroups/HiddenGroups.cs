@@ -7,25 +7,8 @@ public abstract class HiddenGroups
         //Console.WriteLine(sudoku);
         bool result = false;
 
-        BitArray[][] rowsMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-        BitArray[][] columnMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-        BitArray[][] squareMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-
-        Cell[][][] cellModes = { sudoku.Rows, sudoku.Columns, sudoku.Squares };
-        BitArray[][][] maskModes = { rowsMasks, columnMasks, squareMasks };
-
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                for (int bit = 0; bit < 9; bit++)
-                {
-                    rowsMasks[i][bit][j] = sudoku.Rows[i][j].Options[bit];
-                    columnMasks[j][bit][i] = sudoku.Rows[i][j].Options[bit];
-                    squareMasks[3 * (i / 3) + j / 3][bit][3 * (i % 3) + j % 3] = sudoku.Rows[i][j].Options[bit];
-                }
-            }
-        }
+        Cell[][][] cellModes = sudoku.CellModes;
+        BitArray[][][] maskModes = sudoku.GenerateMaskModes();
 
 
         for (int mode = 0; mode < cellModes.Length; mode++)
@@ -37,8 +20,8 @@ public abstract class HiddenGroups
                 var masks = maskModes[mode][i];
 
                 var smasks = masks.Select((bitArrForKey, keyBit) => (bitArrForKey, keyBit))
-                    .Where(p => (p.bitArrForKey.GetArrayOfOnes().Length <= groupSize)
-                    && (p.bitArrForKey.GetArrayOfOnes().Length > 0))
+                    .Where(p => (p.bitArrForKey.ToIndicesArray().Length <= groupSize)
+                    && (p.bitArrForKey.ToIndicesArray().Length > 0))
                     .ToArray();
 
 
@@ -56,7 +39,7 @@ public abstract class HiddenGroups
                         bitArrayOfmasks.Or(smasks[move[r]].bitArrForKey);
                     }
 
-                    if ((positionOfOnes = bitArrayOfmasks.GetArrayOfOnes()).Length == groupSize)
+                    if ((positionOfOnes = bitArrayOfmasks.ToIndicesArray()).Length == groupSize)
                     {
                         for (int position = 0; position < positionOfOnes.Length; position++)
                         {

@@ -6,24 +6,28 @@ namespace SudokuSolver;
 
 public class Sudoku
 {
+    private static readonly int[] FullRowMask = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
     public Cell[][] Rows;
     public Cell[][] Columns;
     public Cell[][] Squares;
+    public Cell[][][] CellModes;
 
     public List<Cell> newFoundCells;
 
-    public Cell this[int i,int j] => Rows[i][j];
+    public Cell this[int i, int j] => Rows[i][j];
 
-    public Sudoku() { }
+    private Sudoku() { }
 
-    public Sudoku(int[,] cells)
+    public Sudoku(string sudokuCode)
     {
-        newFoundCells = new List<Cell>();   
-        if ((cells.GetLength(0) != 9) | (cells.GetLength(1) != 9)) throw new ArgumentException("Wrong size of array");
+        newFoundCells = new List<Cell>();
+        if ((sudokuCode.Length != 81)) throw new ArgumentException("Wrong size of array");
 
         Rows = new Cell[9][];
         Columns = new Cell[9][];
         Squares = new Cell[9][];
+        CellModes = new[] { Rows, Columns, Squares };
 
         for (int i = 0; i < 9; i++)
         {
@@ -36,12 +40,12 @@ public class Sudoku
         {
             for (int j = 0; j < 9; j++)
             {
-                if (cells[i, j] > 9 | cells[i, j] < 0) throw new ArgumentException($"cell[{i},{j}] is not correct");
+                if (sudokuCode[9 * i + j] > '9' | sudokuCode[9 * i + j] < '0') throw new ArgumentException($"cell[{i},{j}] is not correct");
 
-                BitArray cellBitArray = (cells[i, j] == 0) ? (new BitArray(9)).Not() : (new BitArray(9));
+                BitArray cellBitArray = (sudokuCode[9 * i + j] == '0') ? (new BitArray(9)).Not() : (new BitArray(9));
 
-                Cell cell = new Cell(i, j, cells[i, j], cellBitArray);
-               // if (cells[i, j] != 0) cell.isSolvedAndChecked = true; 
+                Cell cell = new Cell(i, j, sudokuCode[9 * i + j] - '0', cellBitArray);
+                // if (cells[i, j] != 0) cell.isSolvedAndChecked = true; 
 
                 Rows[i][j] = cell;
                 Columns[j][i] = cell;
@@ -50,11 +54,13 @@ public class Sudoku
         }
     }
 
+
     public Sudoku(int[][][] grid)
     {
         Rows = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
         Columns = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
         Squares = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
+        CellModes = new[] { Rows, Columns, Squares };
 
         for (int i = 0; i < 27; i++)
         {
@@ -62,20 +68,20 @@ public class Sudoku
             {
                 Cell c = Rows[i / 3][j];
 
-                if(c == null)
+                if (c == null)
                 {
-                    c = new Cell(i/3, j, 0, new BitArray(9));
+                    c = new Cell(i / 3, j, 0, new BitArray(9));
                     Rows[i / 3][j] = c;
                     Columns[j][i / 3] = c;
                     Squares[i / 3 / 3 * 3 + j / 3][i / 3 % 3 * 3 + j % 3] = c;
                 }
 
-                if(c.Value != 0)
+                if (c.Value != 0)
                 {
                     continue;
                 }
 
-                if(grid[i][j].Length > 0 && grid[i][j][0] < 0)
+                if (grid[i][j].Length > 0 && grid[i][j][0] < 0)
                 {
                     c.Value = -grid[i][j][0];
                     continue;
@@ -88,6 +94,7 @@ public class Sudoku
             }
         }
     }
+
 
     public override string ToString()
     {
@@ -186,39 +193,91 @@ public class Sudoku
         return c == 1 ? cell : null;
     }
 
-
-    public void Update(int[,] cells)
+    public string ConvertToStr()
     {
+        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < 9; i++)
         {
             for (int j = 0; j < 9; j++)
             {
-                this[i, j].Value = cells[i, j];
-                
-                if (cells[i, j] == 0)
+                sb.Append(this[i, j].Value);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public Sudoku Clone()
+    {
+        Sudoku sudoku = new Sudoku();
+        sudoku.Rows = Rows.Select(r => r.Select(c => new Cell(c.I, c.J, c.Value, (BitArray)c.Options.Clone())).ToArray()).ToArray();
+
+        sudoku.Columns = new Cell[9][];
+        sudoku.Squares = new Cell[9][];
+        sudoku.CellModes = new[] { sudoku.Rows, sudoku.Columns, sudoku.Squares };
+
+        for (int i = 0; i < 9; i++)
+        {
+            sudoku.Columns[i] = new Cell[9];
+            sudoku.Squares[i] = new Cell[9];
+        }
+
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                sudoku.Columns[j][i] = sudoku.Rows[i][j];
+                sudoku.Squares[3 * (i / 3) + (j / 3)][3 * (i % 3) + j % 3] = sudoku.Rows[i][j];
+            }
+        }
+
+        sudoku.newFoundCells = new List<Cell>(newFoundCells.Count).Select((s, i) => sudoku.Rows[newFoundCells[i].I][newFoundCells[i].J]).ToList();
+
+        return sudoku;
+    }
+
+    public BitArray[][][] GenerateMaskModes()
+    {
+        BitArray[][] rowsMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
+        BitArray[][] columnMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
+        BitArray[][] squareMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
+
+        BitArray[][][] maskModes = { rowsMasks, columnMasks, squareMasks };
+
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                for (int bit = 0; bit < 9; bit++)
                 {
-                    for (int k = 0; k < 9; k++)
-                    {
-                        this[i, j].Options[k] = true;
-                    }
-                }
-                else
-                {
-                    for (int k = 0; k < 9; k++)
-                    {
-                        this[i, j].Options[k] = false;
-                    }
+                    rowsMasks[i][bit][j] = Rows[i][j].Options[bit];
+                    columnMasks[j][bit][i] = Rows[i][j].Options[bit];
+                    squareMasks[3 * (i / 3) + j / 3][bit][3 * (i % 3) + j % 3] = Rows[i][j].Options[bit];
                 }
             }
         }
 
-        newFoundCells.Clear();
+        return maskModes;
     }
 
+    public bool IsSolved()
+    {
+        int count = 0;
+
+        for (int mode = 0; mode < 3; mode++)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                var values = CellModes[mode][i].Select((s) => s.Value).Where(v => v != 0).ToArray();
+
+                if (values.Length == 9)
+                {
+                    count++;
+                }
+            }
+        }
+
+        return count == 27;
+    }
 }
-
-
-
-
-
-

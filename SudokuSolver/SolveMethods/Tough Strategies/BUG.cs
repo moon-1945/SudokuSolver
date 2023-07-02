@@ -12,7 +12,7 @@ public class BUG : ISolveMethod
         Cell BCcell = FindBC(sudoku);
         if (BCcell == null) return false;
 
-        int[] BCValues = BCcell.Options.GetArrayOfOnes();
+        int[] BCValues = BCcell.Options.ToIndicesArray();
 
         var BCountBits = BCValues.Zip(new int[3]).ToArray();
 
@@ -48,7 +48,7 @@ public class BUG : ISolveMethod
             for (int j = 0; j < 9; j++)
             {
                 if (sudoku[i, j].Value != 0) continue;   
-                int len = sudoku[i, j].Options.GetArrayOfOnes().Length;
+                int len = sudoku[i, j].Options.ToIndicesArray().Length;
                 if (len == 2) continue;
                 if (len == 3)
                 {

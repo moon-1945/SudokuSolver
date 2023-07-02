@@ -115,7 +115,7 @@ internal class YWing : ISolveMethod
         {
             for (int j = 0; j < 9; j++)
             {
-                int[] arrOfOnes = sudoku[i, j].Options.GetArrayOfOnes();
+                int[] arrOfOnes = sudoku[i, j].Options.ToIndicesArray();
                 if (arrOfOnes.Length != 2) continue;
                 cellsWith2Posibles[arrOfOnes[0]][arrOfOnes[1]].Add(sudoku[i, j]);
                 cellsWith2Posibles[arrOfOnes[1]][arrOfOnes[0]].Add(sudoku[i, j]);

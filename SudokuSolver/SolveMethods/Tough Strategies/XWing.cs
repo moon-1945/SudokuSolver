@@ -7,25 +7,8 @@ public class XWing : ISolveMethod
     {
         bool[] beginBools = ToBoolArray(sudoku);
 
-        BitArray[][] rowsMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-        BitArray[][] columnMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-        BitArray[][] squareMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
-
-        Cell[][][] cellModes = { sudoku.Rows, sudoku.Columns, sudoku.Squares };
-        BitArray[][][] maskModes = { rowsMasks, columnMasks, squareMasks };
-
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                for (int bit = 0; bit < 9; bit++)
-                {
-                    rowsMasks[i][bit][j] = sudoku.Rows[i][j].Options[bit];
-                    columnMasks[j][bit][i] = sudoku.Rows[i][j].Options[bit];
-                    squareMasks[3 * (i / 3) + j / 3][bit][3 * (i % 3) + j % 3] = sudoku.Rows[i][j].Options[bit];
-                }
-            }
-        }
+        Cell[][][] cellModes = sudoku.CellModes;
+        BitArray[][][] maskModes = sudoku.GenerateMaskModes();
 
         for (int i = 0; i < 9; i++)
         {
@@ -35,8 +18,8 @@ public class XWing : ISolveMethod
                 {
                     for (int bit = 0; bit < 9; bit++)
                     {
-                        var cellsI = maskModes[mode][i][bit].GetArrayOfOnes();
-                        var cellsJ = maskModes[mode][j][bit].GetArrayOfOnes();
+                        var cellsI = maskModes[mode][i][bit].ToIndicesArray();
+                        var cellsJ = maskModes[mode][j][bit].ToIndicesArray();
 
                         if (cellsI.Length != 2 || cellsJ.Length != 2 ||
                             !((IStructuralEquatable)cellsI).Equals(cellsJ, EqualityComparer<int>.Default)) continue;
