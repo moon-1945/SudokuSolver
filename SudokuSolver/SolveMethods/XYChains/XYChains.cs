@@ -37,36 +37,7 @@ internal class XYChains : ISolveMethod
             pathEnds[i] = new PathEnds[vertices.Count].Select((elem, j) => new PathEnds(vertices[i], vertices[j])).ToArray();
         }
 
-
-        //PathEnds pathEnds1 = new PathEnds(sudokuGraph[1, 2], sudokuGraph[4,2]);
-        //PathEnds pathEnds2 = new PathEnds(sudokuGraph[4, 2], sudokuGraph[4, 0]);
-
-        //var path = pathEnds1 * pathEnds2;
-
-        //foreach (var c in path.EndsOfPath)
-        //{
-        //    Console.WriteLine($"{c.first + 1} {c.second + 1}");
-        //}
-
-        // Console.WriteLine(sudoku);
-
         var reachabilityMatrix = new Matrix<PathEnds>(pathEnds).CalculateReachabilityMatrix();
-
-        //Console.WriteLine();
-        //for (int i = 0; i < reachabilityMatrix.Rows; i++)
-        //{
-        //    for (int j = 0; j < reachabilityMatrix.Columns; j++)
-        //    {
-        //        Console.WriteLine($"({reachabilityMatrix[i, j].Begin.cell.I + 1} {reachabilityMatrix[i, j].Begin.cell.J + 1}) " +
-        //            $"({reachabilityMatrix[i, j].End.cell.I + 1} {reachabilityMatrix[i, j].End.cell.J + 1})");
-
-        //        foreach (var c in reachabilityMatrix[i, j].EndsOfPath)
-        //        {
-        //            Console.WriteLine($"{c.first + 1} {c.second + 1}");
-        //        }
-        //    }
-        //}
-        //Console.WriteLine();
 
         for (int i = 0; i < vertices.Count; i++)
         {
