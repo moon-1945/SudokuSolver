@@ -17,7 +17,7 @@ sudokuSolver.Solve();
 Console.WriteLine(sudoku);
 */
 
-Solver.RunExample();
+Solver.RunCheck();
 
 
 //100070002030000040000010000040308000000000100000400000000600830700050000200000000

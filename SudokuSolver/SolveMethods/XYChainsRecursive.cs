@@ -153,11 +153,14 @@ class SudokuGraph
             if (current == path[i]) return;
         }
 
+        List<(int first, int second)> newNumbers = new();
+
         int newfirstnum = firstnum, newsecondnum = -1;
 
         if (path.Count == 0)
         {
             path.Add(current);
+            newNumbers.Add((newfirstnum, newsecondnum));
         }
         else
         {
@@ -167,30 +170,49 @@ class SudokuGraph
             if (path.Count == 1)
             {
                 int[] common = lastOptions.Intersect(currentOptions).ToArray();
-                if(common.Length != 1) return;
-                newfirstnum = (lastOptions[0] == common[0]) ? lastOptions[1] : lastOptions[0];
-                newsecondnum = (currentOptions[0] == common[0]) ? currentOptions[1] : currentOptions[0];
+                if (common.Length == 1) 
+                {
+                    newfirstnum = (lastOptions[0] == common[0]) ? lastOptions[1] : lastOptions[0];
+                    newsecondnum = (currentOptions[0] == common[0]) ? currentOptions[1] : currentOptions[0];
+                    newNumbers.Add((newfirstnum, newsecondnum));
+                }
+                else if (common.Length == 2)
+                {
+                    newNumbers.Add((lastOptions[0], lastOptions[0]));
+                    newNumbers.Add((lastOptions[1], lastOptions[1]));
+                }
+                else
+                {
+                    return;
+                }
             }
             else
             {
                 if (!currentOptions.Contains(secondnum)) return;
                 newsecondnum = (currentOptions[0] == secondnum) ? currentOptions[1] : currentOptions[0];
+                newNumbers.Add((newfirstnum, newsecondnum));
             }
             
 
             path.Add(current);
         }
 
-        if (newfirstnum == newsecondnum && newfirstnum != -1)
-        {
-            if (path[0].cell.I *10 + path[0].cell.J < path[^1].cell.I * 10 + path[^1].cell.J) ends.Add((path[0], path[^1], newfirstnum));
-        }
+      
 
 
-        foreach (var neighbor in current.neighbors)
+        for (int i = 0; i < newNumbers.Count; i++)
         {
-            GetXYChainsEndsOfCellRecursive(neighbor, path, newfirstnum, newsecondnum, ends);
+            if (newNumbers[i].first == newNumbers[i].second && newNumbers[i].first != -1)
+            {
+                if (path[0].cell.I * 10 + path[0].cell.J < path[^1].cell.I * 10 + path[^1].cell.J) ends.Add((path[0], path[^1], newNumbers[i].first));
+            }
+
+            foreach (var neighbor in current.neighbors)
+            {
+                GetXYChainsEndsOfCellRecursive(neighbor, path, newNumbers[i].first, newNumbers[i].second , ends);
+            }
         }
+       
 
 
         path.Remove(current);
