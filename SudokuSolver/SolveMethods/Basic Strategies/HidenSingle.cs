@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using SudokuSolver.Sudoku;
+using System.Collections;
 
 namespace SudokuSolver.SolveMethods.BasicStrategies;
 
 public class HidenSingle : ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
         for (int numBit = 0; numBit < 9; numBit++)
         {

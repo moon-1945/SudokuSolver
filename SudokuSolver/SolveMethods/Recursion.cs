@@ -1,10 +1,11 @@
 ﻿using SudokuSolver.SolveMethods.BasicStrategies;
+using SudokuSolver.Sudoku;
 
 namespace SudokuSolver;
 
 public class Recursion
 {
-    public Sudoku Solve(Sudoku sudoku)
+    public SudokuBase Solve(SudokuBase sudoku)
     {
         new CheckForSolvedCells().TrySolve(sudoku);
         new ShowPossibles().TrySolve(sudoku);
@@ -12,7 +13,7 @@ public class Recursion
         return RecursionPart(sudoku);
     }
 
-    public Sudoku RecursionPart(Sudoku sudoku)
+    public SudokuBase RecursionPart(SudokuBase sudoku)
     {
         if (sudoku.IsSolved()) return sudoku;
 
@@ -33,10 +34,10 @@ public class Recursion
 
                             for (int k = 0; k < count; k++)
                             {
-                                Sudoku sudokuClone = sudoku.Clone();
+                                SudokuBase sudokuClone = sudoku.Clone();
                                 SetValue(sudokuClone, sudokuClone.CellModes[mode][i][numberOfCells[k]], bit + 1);
 
-                                Sudoku sudokuSolve = RecursionPart(sudokuClone);
+                                SudokuBase sudokuSolve = RecursionPart(sudokuClone);
 
                                 if (sudokuSolve != null) return sudokuSolve;
                                 numberOfNulls++;
@@ -50,7 +51,7 @@ public class Recursion
         }
         return null;
     }
-    public void SetValue(Sudoku sudoku, Cell cell, int value)
+    public void SetValue(SudokuBase sudoku, Cell cell, int value)
     {
         cell.Value = value;
         cell.Options = new BitArray(9);

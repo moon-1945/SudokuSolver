@@ -1,10 +1,11 @@
 ﻿using SudokuSolver.SolveMethods.XCycles;
+using SudokuSolver.Sudoku;
 
 namespace SudokuSolver.SolveMethods.XCycles;
 
 class SudokuGraph
 {
-    public Sudoku sudoku;
+    public SudokuBase sudoku;
 
     public CellVertice[][] newRows;
     public CellVertice[][] newColumns;
@@ -14,7 +15,7 @@ class SudokuGraph
 
     private HashSet<CellVertice>[] cellsWithStrongConnection = new HashSet<CellVertice>[9];
 
-    public SudokuGraph(Sudoku sudoku)
+    public SudokuGraph(SudokuBase sudoku)
     {
         this.sudoku = sudoku;
 

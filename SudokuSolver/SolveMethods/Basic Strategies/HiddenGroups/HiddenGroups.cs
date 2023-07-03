@@ -1,8 +1,10 @@
-﻿namespace SudokuSolver.SolveMethods.BasicStrategies.HiddenGroups;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.BasicStrategies.HiddenGroups;
 
 public abstract class HiddenGroups
 {
-    public bool TrySolve(Sudoku sudoku, int groupSize)
+    public bool TrySolve(SudokuBase sudoku, int groupSize)
     {
         //Console.WriteLine(sudoku);
         bool result = false;

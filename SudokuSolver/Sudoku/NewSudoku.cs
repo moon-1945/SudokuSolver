@@ -2,7 +2,7 @@
 
 namespace SudokuSolver.Sudoku;
 
-public class NewSudoku : Sudoku
+public class NewSudoku : SudokuBase
 {
     public override Cell[][] Rows { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public override Cell[][] Columns { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -201,9 +201,9 @@ public class NewSudoku : Sudoku
         return sb.ToString();
     }
 
-    public override Sudoku Clone()
+    public override SudokuBase Clone()
     {
-        Sudoku sudoku = new NewSudoku();
+        SudokuBase sudoku = new NewSudoku();
         sudoku.Rows = Rows.Select(r => r.Select(c => new Cell(c.I, c.J, c.Value, (BitArray)c.Options.Clone())).ToArray()).ToArray();
 
         sudoku.Columns = new Cell[9][];

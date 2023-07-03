@@ -2,7 +2,7 @@
 
 namespace SudokuSolver.Sudoku;
 
-public abstract class Sudoku
+public abstract class SudokuBase
 {
     protected static readonly int[] FullRowMask = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -61,7 +61,7 @@ public abstract class Sudoku
 
     public abstract string ConvertToStr();
 
-    public abstract Sudoku Clone();
+    public abstract SudokuBase Clone();
 
     public abstract BitArray[][][] GenerateMaskModes();
 

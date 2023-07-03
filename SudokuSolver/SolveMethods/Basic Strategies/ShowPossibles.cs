@@ -1,10 +1,12 @@
-﻿namespace SudokuSolver.SolveMethods.BasicStrategies;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.BasicStrategies;
 
 public class ShowPossibles : ISolveMethod
 {
     private bool IsUsed = false;
 
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
         bool result = false;
        
@@ -31,7 +33,7 @@ public class ShowPossibles : ISolveMethod
         return result;
     }
 
-    public bool ShowPossiblesForCell(Sudoku sudoku, Cell cell)
+    public bool ShowPossiblesForCell(SudokuBase sudoku, Cell cell)
     {
         if (cell.Value == 0) return false;
 

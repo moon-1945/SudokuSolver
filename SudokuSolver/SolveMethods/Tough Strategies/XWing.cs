@@ -1,8 +1,10 @@
-﻿namespace SudokuSolver.SolveMethods.ToughStrategies;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.ToughStrategies;
 
 public class XWing : ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
         bool[] beginBools = ToBoolArray(sudoku);
 
@@ -40,7 +42,7 @@ public class XWing : ISolveMethod
         return !((IStructuralEquatable)beginBools).Equals(endBools, EqualityComparer<bool>.Default);
     }
 
-    bool[] ToBoolArray(Sudoku sudoku)
+    bool[] ToBoolArray(SudokuBase sudoku)
     {
         return new bool[729].Select((ElementInit, index) => sudoku.Rows[index / 81][(index - (index / 81) * 81) / 9]
         .Options[index % 9]).ToArray();

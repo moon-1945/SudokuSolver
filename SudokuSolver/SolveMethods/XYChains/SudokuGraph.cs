@@ -1,8 +1,10 @@
-﻿namespace SudokuSolver.SolveMethods.XYChains;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.XYChains;
 
 class SudokuGraph
 {
-    public Sudoku sudoku;
+    public SudokuBase sudoku;
 
     public CellVertice[][] newRows;
     public CellVertice[][] newColumns;
@@ -12,7 +14,7 @@ class SudokuGraph
     public CellVertice this[int i, int j] => newRows[i][j];
 
 
-    public SudokuGraph(Sudoku sudoku)
+    public SudokuGraph(SudokuBase sudoku)
     {
         this.sudoku = sudoku;
 

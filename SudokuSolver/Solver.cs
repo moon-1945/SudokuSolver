@@ -14,7 +14,7 @@ namespace SudokuSolver;
 
 public class Solver
 {
-    Sudoku _sudoku;
+    SudokuBase _sudoku;
     private ISolveMethod[] _methods = {
         new CheckForSolvedCells(),
         new ShowPossibles(),
@@ -38,9 +38,9 @@ public class Solver
         //new NakedQuads(),
     };
 
-    public Solver(Sudoku sudoku) => _sudoku = sudoku;
+    public Solver(SudokuBase sudoku) => _sudoku = sudoku;
 
-    public Sudoku Solve()
+    public SudokuBase Solve()
     {
 
         //new ShowPossibles().TrySolve(_sudoku);
@@ -110,7 +110,7 @@ public class Solver
             //Console.WriteLine(sudoku);
             watch.Start();
 
-            Sudoku outSudoku = sudokuSolver.Solve();
+            SudokuBase outSudoku = sudokuSolver.Solve();
 
             watch.Stop();
             //Console.WriteLine(isSolve);
@@ -167,7 +167,7 @@ public class Solver
         var sudokuSolver = new Solver(sudoku);
         //Console.WriteLine(sudoku);
         watch.Start();
-        Sudoku outSudoku = sudokuSolver.Solve();
+        SudokuBase outSudoku = sudokuSolver.Solve();
         watch.Stop();
         //Console.WriteLine(isSolve);
 

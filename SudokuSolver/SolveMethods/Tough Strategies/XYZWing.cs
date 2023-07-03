@@ -1,8 +1,10 @@
-﻿namespace SudokuSolver.SolveMethods.ToughStrategies;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.ToughStrategies;
 
 public class XYZWing : ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
         bool result = false;
 
@@ -61,7 +63,7 @@ public class XYZWing : ISolveMethod
         return result;
     }
 
-    List<Cell> GetConnectedSells(Sudoku sudoku, Cell cell)
+    List<Cell> GetConnectedSells(SudokuBase sudoku, Cell cell)
     {
         List<Cell> cells = new List<Cell>();
         for (int i = 0; i < 9; i++)

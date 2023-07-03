@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SudokuSolver.SolveMethods;
-using System.Diagnostics.CodeAnalysis;
+using SudokuSolver.SolveMethods.BasicStrategies;
+using SudokuSolver.Sudoku;
 using System.Text.Json;
 
 namespace SudokuSolver.UnitTests.SolveMethods;
@@ -94,8 +94,8 @@ public class ShowPossiblesTests
     """)]
     public void TrySolve_WhenPassedUnsimplifiedSudoku_SimplifiesCorrectly(string gridData, string expectedGridData)
     {
-        Sudoku s = Parse(gridData);
-        Sudoku expected = Parse(expectedGridData);
+        SudokuBase s = Parse(gridData);
+        SudokuBase expected = Parse(expectedGridData);
 
         bool res = new ShowPossibles().TrySolve(s);
 
@@ -105,9 +105,9 @@ public class ShowPossiblesTests
         s.Squares.Should().BeEquivalentTo(expected.Squares);
     }
 
-    private Sudoku Parse(string gridString)
+    private SudokuBase Parse(string gridString)
     {
         int[][][] grid = JsonSerializer.Deserialize<int[][][]>(gridString, new JsonSerializerOptions() { AllowTrailingCommas = true })!;
-        return new(grid);
+        return new OldSudoku(grid);
     }
 }

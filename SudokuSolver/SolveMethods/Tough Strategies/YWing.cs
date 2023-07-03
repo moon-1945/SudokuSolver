@@ -1,8 +1,10 @@
-﻿namespace SudokuSolver.SolveMethods.ToughStrategies;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.ToughStrategies;
 
 internal class YWing : ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
 
         bool[] beginBools = ToBoolArray(sudoku);
@@ -68,7 +70,7 @@ internal class YWing : ISolveMethod
 
         return !((IStructuralEquatable)beginBools).Equals(endBools, EqualityComparer<bool>.Default);
     }
-    bool[] ToBoolArray(Sudoku sudoku)
+    bool[] ToBoolArray(SudokuBase sudoku)
     {
         return new bool[729].Select((ElementInit, index) => sudoku.Rows[index / 81][(index - (index / 81) * 81) / 9]
         .Options[index % 9]).ToArray();
@@ -76,7 +78,7 @@ internal class YWing : ISolveMethod
 
     bool AreDependent(Cell cell1, Cell cell2) => cell1.I == cell2.I || cell1.J == cell2.J || cell1.S == cell2.S;
 
-    List<Cell> Intersection(Sudoku sudoku, Cell cell1, Cell cell2)
+    List<Cell> Intersection(SudokuBase sudoku, Cell cell1, Cell cell2)
     {
         List<Cell> result = new List<Cell>();
 
@@ -98,7 +100,7 @@ internal class YWing : ISolveMethod
         return result;
     }
 
-    List<Cell>[][] GetCellsWith2Posibles(Sudoku sudoku)
+    List<Cell>[][] GetCellsWith2Posibles(SudokuBase sudoku)
     {
         List<Cell>[][] cellsWith2Posibles = new List<Cell>[9][];
         for (int i = 0; i < 9; i++)

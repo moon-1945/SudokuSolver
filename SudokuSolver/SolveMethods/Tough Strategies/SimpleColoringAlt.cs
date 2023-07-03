@@ -7,7 +7,7 @@
 
 //public class SimpleColoringAlt : ISolveMethod
 //{
-//    public bool TrySolve(Sudoku sudoku)
+//    public bool TrySolve(SudokuBase sudoku)
 //    {
 //        bool[] beginBools = ToBoolArray(sudoku);
 
@@ -24,7 +24,7 @@
 //        return !((IStructuralEquatable)beginBools).Equals(endBools, EqualityComparer<bool>.Default);
 //    }
 
-//    bool[] ToBoolArray(Sudoku sudoku)
+//    bool[] ToBoolArray(SudokuBase sudoku)
 //    {
 //        return new bool[729].Select((ElementInit, index) => sudoku.Rows[index / 81][(index - (index / 81) * 81) / 9]
 //        .Options[index % 9]).ToArray();
@@ -117,7 +117,7 @@
 //{
 //    public Dictionary<int, SudokuVertice[]> BitGraphs { get; set; }
 
-//    public SudokuGraphAlt(Sudoku sudoku)
+//    public SudokuGraphAlt(SudokuBase sudoku)
 //    {
 //        for(int bit = 0; bit < 9; bit++)
 //        {

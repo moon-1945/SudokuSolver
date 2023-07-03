@@ -1,11 +1,12 @@
 ﻿
+using SudokuSolver.Sudoku;
 using System.Linq;
 
 namespace SudokuSolver.SolveMethods.XCycles;
 
 internal class XCycles : ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
         SudokuGraph sudokuGraph = new SudokuGraph(sudoku);
         // Console.WriteLine(sudokuGraph.sudoku);
@@ -88,7 +89,7 @@ internal class XCycles : ISolveMethod
         return !((IStructuralEquatable)beginBools).Equals(endBools, EqualityComparer<bool>.Default);
     }
 
-    bool[] ToBoolArray(Sudoku sudoku)
+    bool[] ToBoolArray(SudokuBase sudoku)
     {
         return new bool[729].Select((ElementInit, index) => sudoku.Rows[index / 81][(index - index / 81 * 81) / 9]
         .Options[index % 9]).ToArray();

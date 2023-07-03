@@ -2,7 +2,7 @@
 
 namespace SudokuSolver.Sudoku;
 
-public class OldSudoku : Sudoku
+public class OldSudoku : SudokuBase
 {
     private Cell[][] _rows { get; set; }
     private Cell[][] _columns { get; set; }
@@ -164,9 +164,9 @@ public class OldSudoku : Sudoku
         return sb.ToString();
     }
 
-    public override Sudoku Clone()
+    public override SudokuBase Clone()
     {
-        Sudoku sudoku = new OldSudoku();
+        SudokuBase sudoku = new OldSudoku();
         sudoku.Rows = Rows.Select(r => r.Select(c => new Cell(c.I, c.J, c.Value, (BitArray)c.Options.Clone())).ToArray()).ToArray();
 
         sudoku.Columns = new Cell[9][];

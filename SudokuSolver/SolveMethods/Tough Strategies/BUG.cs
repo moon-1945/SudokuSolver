@@ -1,8 +1,10 @@
-﻿namespace SudokuSolver.SolveMethods.ToughStrategies;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.ToughStrategies;
 
 public class BUG : ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
        // Console.WriteLine(sudoku);
 
@@ -37,7 +39,7 @@ public class BUG : ISolveMethod
         return result;
     }
 
-    Cell FindBC(Sudoku sudoku)
+    Cell FindBC(SudokuBase sudoku)
     {
         Cell res = null;
         int count = 0;

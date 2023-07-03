@@ -1,6 +1,8 @@
-﻿namespace SudokuSolver.SolveMethods;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods;
 
 public interface ISolveMethod
 {
-    bool TrySolve(Sudoku sudoku);
+    bool TrySolve(SudokuBase sudoku);
 }

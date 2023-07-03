@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SudokuSolver.SolveMethods.NakedGroups;
+using SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
+using SudokuSolver.Sudoku;
 using System.Text.Json;
 
 namespace SudokuSolver.UnitTests.SolveMethods;
@@ -91,8 +92,8 @@ public class NakedPairsTests
     """)]
     public void TrySolve_WhenPassedSudoku_WorksCorrectly(string gridData, string expectedGridData)
     {
-        Sudoku s = Parse(gridData);
-        Sudoku expected = Parse(expectedGridData);
+        SudokuBase s = Parse(gridData);
+        SudokuBase expected = Parse(expectedGridData);
 
         bool res = new NakedPairs().TrySolve(s);
 
@@ -186,8 +187,8 @@ public class NakedPairsTests
     """)]
     public void TrySolve_WhenPassedSudoku_WorksCorrectly2(string gridData, string expectedGridData)
     {
-        Sudoku s = Parse(gridData);
-        Sudoku expected = Parse(expectedGridData);
+        SudokuBase s = Parse(gridData);
+        SudokuBase expected = Parse(expectedGridData);
 
         bool res = new NakedPairs().TrySolve(s);
 
@@ -197,9 +198,9 @@ public class NakedPairsTests
         s.Squares.Should().BeEquivalentTo(expected.Squares);
     }
 
-    private Sudoku Parse(string gridString)
+    private SudokuBase Parse(string gridString)
     {
         int[][][] grid = JsonSerializer.Deserialize<int[][][]>(gridString, new JsonSerializerOptions() { AllowTrailingCommas = true })!;
-        return new(grid);
+        return new OldSudoku(grid);
     }
 }

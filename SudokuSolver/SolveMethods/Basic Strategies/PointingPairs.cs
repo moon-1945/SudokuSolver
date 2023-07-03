@@ -1,12 +1,13 @@
 ﻿
 
+using SudokuSolver.Sudoku;
 using System.Linq.Expressions;
 
 namespace SudokuSolver.SolveMethods.BasicStrategies;
 
 internal class PointingPairs : ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
         bool[] beginBools = ToBoolArray(sudoku);
 
@@ -78,7 +79,7 @@ internal class PointingPairs : ISolveMethod
         return !((IStructuralEquatable)beginBools).Equals(endBools,EqualityComparer<bool>.Default);
     }
 
-    bool[] ToBoolArray(Sudoku sudoku)
+    bool[] ToBoolArray(SudokuBase sudoku)
     {
         return new bool[729].Select((ElementInit,index) => sudoku.Rows[index / 81][(index - (index / 81) *81) / 9]
         .Options[index % 9]).ToArray();

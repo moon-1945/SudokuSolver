@@ -1,6 +1,8 @@
-﻿namespace SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
 
 public class NakedTriples : NakedGroups, ISolveMethod
 {
-    public bool TrySolve(Sudoku sudoku) => TrySolve(sudoku, 3);
+    public bool TrySolve(SudokuBase sudoku) => TrySolve(sudoku, 3);
 }

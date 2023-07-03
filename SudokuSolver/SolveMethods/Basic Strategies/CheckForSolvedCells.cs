@@ -1,9 +1,11 @@
-﻿namespace SudokuSolver.SolveMethods.BasicStrategies;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.BasicStrategies;
 
 public class CheckForSolvedCells : ISolveMethod
 {
     
-    public bool TrySolve(Sudoku sudoku)
+    public bool TrySolve(SudokuBase sudoku)
     {
         for (int i = 0; i < 9; i++)
         {

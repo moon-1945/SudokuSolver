@@ -1,8 +1,10 @@
-﻿namespace SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
+﻿using SudokuSolver.Sudoku;
+
+namespace SudokuSolver.SolveMethods.BasicStrategies.NakedGroups;
 
 public abstract class NakedGroups
 {
-    public bool TrySolve(Sudoku sudoku, int groupSize)
+    public bool TrySolve(SudokuBase sudoku, int groupSize)
     {
         bool result = false;
 
