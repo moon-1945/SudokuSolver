@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SudokuSolver", "SudokuSolve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SudokuSolver.UnitTests", "SudokuSolver.UnitTests\SudokuSolver.UnitTests.csproj", "{2DB6CEA7-2578-41D6-B3B4-8D0DF7B6CB72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixUtils", "MatrixUtils\MatrixUtils.csproj", "{47FF5630-5C5F-4733-95B5-D02E2A5EFA67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatrixUtils", "MatrixUtils\MatrixUtils.csproj", "{47FF5630-5C5F-4733-95B5-D02E2A5EFA67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixUtils.UnitTests", "MatrixUtils.UnitTests\MatrixUtils.UnitTests.csproj", "{F7DE4913-2220-49F5-8596-1F461134C0DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatrixUtils.UnitTests", "MatrixUtils.UnitTests\MatrixUtils.UnitTests.csproj", "{F7DE4913-2220-49F5-8596-1F461134C0DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceMeasurer", "PerformanceMeasurer\PerformanceMeasurer.csproj", "{2A9BCF84-99A3-4F47-977D-07EB4FAF9E07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F7DE4913-2220-49F5-8596-1F461134C0DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7DE4913-2220-49F5-8596-1F461134C0DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7DE4913-2220-49F5-8596-1F461134C0DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A9BCF84-99A3-4F47-977D-07EB4FAF9E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A9BCF84-99A3-4F47-977D-07EB4FAF9E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A9BCF84-99A3-4F47-977D-07EB4FAF9E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A9BCF84-99A3-4F47-977D-07EB4FAF9E07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

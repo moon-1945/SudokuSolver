@@ -9,7 +9,7 @@ class SudokuGraph
     public CellVertice[][] newSquares;
     public CellVertice[][][] cellModes;
 
-    public new CellVertice this[int i, int j] => newRows[i][j];
+    public CellVertice this[int i, int j] => newRows[i][j];
 
 
     public SudokuGraph(Sudoku sudoku)

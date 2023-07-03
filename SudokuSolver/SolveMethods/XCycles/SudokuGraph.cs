@@ -10,7 +10,7 @@ class SudokuGraph
     public CellVertice[][] newColumns;
     public CellVertice[][] newSquares;
 
-    public new CellVertice this[int i, int j] => newRows[i][j];
+    public CellVertice this[int i, int j] => newRows[i][j];
 
     private HashSet<CellVertice>[] cellsWithStrongConnection = new HashSet<CellVertice>[9];
 

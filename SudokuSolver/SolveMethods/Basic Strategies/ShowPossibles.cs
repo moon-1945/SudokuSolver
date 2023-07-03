@@ -21,13 +21,13 @@ public class ShowPossibles : ISolveMethod
         }
         else
         {
-            for (int i = 0;i < sudoku.newFoundCells.Count ;i++)
+            for (int i = 0;i < sudoku.NewFoundCells.Count ;i++)
             {
-                if (ShowPossiblesForCell(sudoku, sudoku.newFoundCells[i])) result = true;
+                if (ShowPossiblesForCell(sudoku, sudoku.NewFoundCells[i])) result = true;
             }
         }
         
-        sudoku.newFoundCells?.Clear();
+        sudoku.NewFoundCells?.Clear();
         return result;
     }
 

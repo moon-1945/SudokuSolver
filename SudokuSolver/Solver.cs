@@ -6,6 +6,7 @@ using SudokuSolver.SolveMethods.ToughStrategies;
 using SudokuSolver.SolveMethods.ToughStrategies.SimpleColoring;
 using SudokuSolver.SolveMethods.XCycles;
 using SudokuSolver.SolveMethods.XYChains;
+using SudokuSolver.Sudoku;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 
@@ -99,7 +100,7 @@ public class Solver
                 if (unsolved[i] != solved[i]) throw new Exception($"wrong solution ");
             }
 
-            var sudoku = new Sudoku(unsolved);
+            var sudoku = new OldSudoku(unsolved);
             var sudokuSolver = new Solver(sudoku);
 
             var beg = watch.ElapsedMilliseconds;
@@ -162,7 +163,7 @@ public class Solver
 
         var str = "200010000000000403000000500005307000000000260000000000820000070000500010600400000";
 
-        var sudoku = new Sudoku(str);
+        var sudoku = new OldSudoku(str);
         var sudokuSolver = new Solver(sudoku);
         //Console.WriteLine(sudoku);
         watch.Start();
@@ -193,7 +194,7 @@ public class Solver
     {
         var str = "100503000020000740000900000080060070000100003000000000000020800300000009500000000";
 
-        var sudoku = new Sudoku(str);
+        var sudoku = new OldSudoku(str);
 
         var watch = new System.Diagnostics.Stopwatch();
 
@@ -216,7 +217,7 @@ public class Solver
         foreach (var str in File.ReadLines("../../../data2.txt"))
         {   
             count++;
-            var sudoku = new Sudoku(str);
+            var sudoku = new OldSudoku(str);
 
             outputWriter.WriteLine(new Recursion().Solve(sudoku).ConvertToStr());
         }
@@ -237,7 +238,7 @@ public class Solver
                 if (unsolved[i] != solved[i]) throw new Exception($"wrong solution {count}");
             }
 
-            var sudokuSolved = new Sudoku(solved);
+            var sudokuSolved = new OldSudoku(solved);
 
             if (!sudokuSolved.IsSolved()) throw new Exception($"wrong solution {count}");
         }

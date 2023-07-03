@@ -1,28 +1,23 @@
-﻿using System.Collections;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Text;
 
-namespace SudokuSolver;
+namespace SudokuSolver.Sudoku;
 
-public class Sudoku
+public class NewSudoku : Sudoku
 {
-    private static readonly int[] FullRowMask = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    public override Cell[][] Rows { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Cell[][] Columns { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Cell[][] Squares { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Cell[][][] CellModes { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override List<Cell> NewFoundCells { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    public Cell[][] Rows;
-    public Cell[][] Columns;
-    public Cell[][] Squares;
-    public Cell[][][] CellModes;
+    public override Cell this[int i, int j] => Rows[i][j];
 
-    public List<Cell> newFoundCells;
+    private NewSudoku() { }
 
-    public Cell this[int i, int j] => Rows[i][j];
-
-    private Sudoku() { }
-
-    public Sudoku(string sudokuCode)
+    public NewSudoku(string sudokuCode)
     {
-        newFoundCells = new List<Cell>();
-        if ((sudokuCode.Length != 81)) throw new ArgumentException("Wrong size of array");
+        NewFoundCells = new List<Cell>();
+        if (sudokuCode.Length != 81) throw new ArgumentException("Wrong size of array");
 
         Rows = new Cell[9][];
         Columns = new Cell[9][];
@@ -42,20 +37,19 @@ public class Sudoku
             {
                 if (sudokuCode[9 * i + j] > '9' | sudokuCode[9 * i + j] < '0') throw new ArgumentException($"cell[{i},{j}] is not correct");
 
-                BitArray cellBitArray = (sudokuCode[9 * i + j] == '0') ? (new BitArray(9)).Not() : (new BitArray(9));
+                BitArray cellBitArray = sudokuCode[9 * i + j] == '0' ? new BitArray(9).Not() : new BitArray(9);
 
                 Cell cell = new Cell(i, j, sudokuCode[9 * i + j] - '0', cellBitArray);
                 // if (cells[i, j] != 0) cell.isSolvedAndChecked = true; 
 
                 Rows[i][j] = cell;
                 Columns[j][i] = cell;
-                Squares[3 * (i / 3) + (j / 3)][3 * (i % 3) + j % 3] = cell;
+                Squares[3 * (i / 3) + j / 3][3 * (i % 3) + j % 3] = cell;
             }
         }
     }
 
-
-    public Sudoku(int[][][] grid)
+    public NewSudoku(int[][][] grid)
     {
         Rows = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
         Columns = Enumerable.Range(0, 9).Select(i => Enumerable.Repeat<Cell>(null, 9).ToArray()).ToArray();
@@ -94,7 +88,6 @@ public class Sudoku
             }
         }
     }
-
 
     public override string ToString()
     {
@@ -139,7 +132,7 @@ public class Sudoku
         return sb.ToString();
     }
 
-    public Cell? GetSingleOrNull(Cell[] cells, int n)
+    public override Cell? GetSingleOrNull(Cell[] cells, int n)
     {
         int c = 0;
         Cell? cell = null;
@@ -193,7 +186,7 @@ public class Sudoku
         return c == 1 ? cell : null;
     }
 
-    public string ConvertToStr()
+    public override string ConvertToStr()
     {
         StringBuilder sb = new StringBuilder();
 
@@ -208,9 +201,9 @@ public class Sudoku
         return sb.ToString();
     }
 
-    public Sudoku Clone()
+    public override Sudoku Clone()
     {
-        Sudoku sudoku = new Sudoku();
+        Sudoku sudoku = new NewSudoku();
         sudoku.Rows = Rows.Select(r => r.Select(c => new Cell(c.I, c.J, c.Value, (BitArray)c.Options.Clone())).ToArray()).ToArray();
 
         sudoku.Columns = new Cell[9][];
@@ -228,16 +221,16 @@ public class Sudoku
             for (int j = 0; j < 9; j++)
             {
                 sudoku.Columns[j][i] = sudoku.Rows[i][j];
-                sudoku.Squares[3 * (i / 3) + (j / 3)][3 * (i % 3) + j % 3] = sudoku.Rows[i][j];
+                sudoku.Squares[3 * (i / 3) + j / 3][3 * (i % 3) + j % 3] = sudoku.Rows[i][j];
             }
         }
 
-        sudoku.newFoundCells = new List<Cell>(newFoundCells.Count).Select((s, i) => sudoku.Rows[newFoundCells[i].I][newFoundCells[i].J]).ToList();
+        sudoku.NewFoundCells = new List<Cell>(NewFoundCells.Count).Select((s, i) => sudoku.Rows[NewFoundCells[i].I][NewFoundCells[i].J]).ToList();
 
         return sudoku;
     }
 
-    public BitArray[][][] GenerateMaskModes()
+    public override BitArray[][][] GenerateMaskModes()
     {
         BitArray[][] rowsMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
         BitArray[][] columnMasks = Enumerable.Range(0, 9).Select(i => Enumerable.Range(0, 9).Select(i => new BitArray(9)).ToArray()).ToArray();
@@ -261,7 +254,7 @@ public class Sudoku
         return maskModes;
     }
 
-    public bool IsSolved()
+    public override bool IsSolved()
     {
         int count = 0;
 
