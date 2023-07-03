@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SudokuSolver/time.txt
+/SudokuSolver/timeSorted.txt
+/SudokuSolver/solutions.txt
+/SudokuSolver/failures.txt

@@ -1,5 +1,4 @@
-﻿
-namespace SudokuSolver.SolveMethods.ToughStrategies;
+﻿namespace SudokuSolver.SolveMethods.ToughStrategies;
 
 internal class YWing : ISolveMethod
 {

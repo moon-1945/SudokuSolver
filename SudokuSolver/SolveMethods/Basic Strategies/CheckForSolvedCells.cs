@@ -13,7 +13,7 @@ public class CheckForSolvedCells : ISolveMethod
 
                 if (singleOrZero == 0) continue;  
 
-                sudoku.newFoundCells.Add(sudoku.Rows[i][j]);
+                sudoku.NewFoundCells.Add(sudoku.Rows[i][j]);
 
                 sudoku.Rows[i][j].Value = singleOrZero;
                 sudoku.Rows[i][j].Options[singleOrZero - 1] = false;

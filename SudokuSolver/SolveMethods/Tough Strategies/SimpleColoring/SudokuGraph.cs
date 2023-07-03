@@ -1,5 +1,4 @@
-﻿
-namespace SudokuSolver.SolveMethods.ToughStrategies.SimpleColoring;
+﻿namespace SudokuSolver.SolveMethods.ToughStrategies.SimpleColoring;
 
 internal class SudokuGraph
 {
@@ -9,7 +8,7 @@ internal class SudokuGraph
     public CellVertice[][] newColumns;
     public CellVertice[][] newSquares;
 
-    public new CellVertice this[int i,int j] => newRows[i][j];
+    public CellVertice this[int i,int j] => newRows[i][j];
 
     public SudokuGraph(Sudoku sudoku)
     {

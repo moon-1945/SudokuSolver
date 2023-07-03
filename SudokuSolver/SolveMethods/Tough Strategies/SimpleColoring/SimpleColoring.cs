@@ -1,5 +1,4 @@
-﻿
-namespace SudokuSolver.SolveMethods.ToughStrategies.SimpleColoring;
+﻿namespace SudokuSolver.SolveMethods.ToughStrategies.SimpleColoring;
 
 public class SimpleColoring : ISolveMethod
 {
